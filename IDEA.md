@@ -1,0 +1,1 @@
+My Watch Later playlist gets full all the time, the goal is to build a mechanism, that we can simply remove or delete bulk videos from the list with certain criterias, based on categories, channels or at least based on the added date (the older first) order

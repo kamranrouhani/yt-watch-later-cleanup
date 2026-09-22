@@ -1,0 +1,13 @@
+node_modules/
+coverage/
+dist/
+*.zip
+*.crx
+*.pem
+.env
+.env.*
+.DS_Store
+test/fixtures/captured/**/raw/
+test-results/
+playwright-report/
+.hermes/
