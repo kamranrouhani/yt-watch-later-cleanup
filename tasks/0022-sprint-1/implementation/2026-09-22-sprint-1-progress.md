@@ -61,3 +61,18 @@ Moved: the local folder is `/root/projects/yt-watch-later-playlist-cleanup`
 again. Renaming it earlier broke the workspace Kamran had pointed at it.
 
 Next: fresh session starts #1 from KICKOFF.md.
+
+## 2026-09-22 23:28  #1 scaffold, merged in PR #23
+
+Worked: plan transcribed test first; 9 unit tests, syntax check, real Chrome
+load test, CI. Merge commit 30ebe45. CI 9 of 9.
+Added: the toolbar handler is a named `openDashboard` so the browser test
+calls it twice and checks one dashboard tab, not just that a listener exists.
+Did not work: the unit files fail as one file level ENOENT rather than per
+test as the plan predicted; four progress log timestamps were estimated and
+are corrected in that log.
+Found: `node_modules/` is inside the unpacked extension, filed as #24. #22
+pointed at `tasks/0001-sprint-1/`, fixed to 0022.
+Unblocked: #2, #3, #4, #8, #10.
+Then: #3 tooling done on its branch, draft PR #25, waiting on the capture
+(BLOCKED.md on that branch). Working #4 meanwhile.
