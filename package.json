@@ -1,0 +1,17 @@
+{
+  "name": "yt-watch-later-cleanup",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Dev harness for the Watch Later Cleanup extension. Not shipped.",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "test:watch": "node --test --watch \"test/*.test.js\"",
+    "test:browser": "node test/browser/load.spec.js",
+    "test:all": "npm run check && npm test && npm run test:browser",
+    "check": "node scripts/check-syntax.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}

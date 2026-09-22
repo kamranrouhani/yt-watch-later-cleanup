@@ -4,10 +4,15 @@
 
 ```bash
 npm install
+npm run check         # every js and json file parses
 npm test              # unit and guard tests, Node, no browser
-npm run test:browser  # real Chrome via Playwright, fake YouTube from fixtures
-npm run test:all
+npm run test:browser  # loads the extension in real Chrome and opens the dashboard
+npm run test:all      # all three
 ```
+
+The browser test uses the Chromium at
+`/root/.cache/ms-playwright/chromium-1223/chrome-linux64/chrome` when it
+exists. Point `WL_CHROME` at another Chrome or Chromium binary to override.
 
 `npm test` must be green before any commit. It must never launch a browser;
 the browser harness is scoped out of it by path.

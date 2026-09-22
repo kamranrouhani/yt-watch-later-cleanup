@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Watch Later Cleanup",
+  "version": "0.1.0",
+  "description": "Clean up a YouTube Watch Later playlist with rules. Preview first, then remove.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "action": {
+    "default_title": "Open Watch Later Cleanup"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
