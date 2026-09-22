@@ -26,3 +26,15 @@ for now. Adding one needs `gh auth refresh -s project`, which is an
 interactive login Kamran has to do.
 
 Next: #1, scaffold.
+
+## 2026-09-22 21:25  Setup: licence detection fix
+
+Did not work: combining both MIT notices in the root LICENSE. GitHub's
+licence detection reported `NOASSERTION` instead of MIT, so the repo showed
+no licence at all.
+
+Worked: root LICENSE now holds only our notice. The reconstructed upstream
+notice moved to `reference/upstream/LICENSE`, next to the code it covers.
+README credit and `reference/upstream/README.md` point there.
+
+Next: #1, scaffold.
