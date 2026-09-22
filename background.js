@@ -2,7 +2,7 @@
 
 const DASHBOARD_PATH = 'dashboard/dashboard.html';
 
-chrome.action.onClicked.addListener(async () => {
+async function openDashboard() {
   const url = chrome.runtime.getURL(DASHBOARD_PATH);
   const [existing] = await chrome.tabs.query({ url });
   if (existing) {
@@ -11,4 +11,6 @@ chrome.action.onClicked.addListener(async () => {
     return;
   }
   await chrome.tabs.create({ url });
-});
+}
+
+chrome.action.onClicked.addListener(openDashboard);
