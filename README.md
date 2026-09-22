@@ -67,8 +67,8 @@ The InnerTube client, the playlist parsing, the oldest-first sort handling and
 the removal call were ported from
 [yt-watch-later-tools](https://github.com/JadenJSJ/yt-watch-later-tools) by
 JadenJSJ, a userscript that removes the oldest N videos from Watch Later. Its
-source is kept unmodified in [reference/upstream/](reference/upstream/) and
-its licence notice is included in [LICENSE](LICENSE).
+source and MIT licence notice are kept unmodified in
+[reference/upstream/](reference/upstream/).
 
 ## Licence
 
