@@ -12,6 +12,16 @@ batches.
 Status: in development. Nothing here is usable yet. See
 [ROADMAP.md](ROADMAP.md) and the open issues.
 
+## Try it
+
+1. Clone the repository.
+2. Open `chrome://extensions` and turn on developer mode.
+3. Click "Load unpacked" and select the repository root.
+4. Click the toolbar icon. The dashboard opens in a tab.
+
+For now the dashboard is an empty page with a heading. It does not talk to
+YouTube yet.
+
 ## Why this exists
 
 Watch Later has a hard size limit and no real tooling. YouTube offers one bulk
