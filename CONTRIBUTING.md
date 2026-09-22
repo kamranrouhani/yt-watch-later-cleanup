@@ -81,7 +81,11 @@ is silently wrong data driving a deletion, not an exception.
 ## Workflow
 
 - One issue, one branch, one pull request. Branches are named
-  `feature/<issue>-<slug>` or `fix/<issue>-<slug>`.
+  `feature/NNNN-<slug>` or `fix/NNNN-<slug>`, where `NNNN` is the issue
+  number padded to four digits.
+- The task folder for an issue uses the same number: issue #5 is
+  `tasks/0005-<slug>/`. The `blocked` label means the issue has an open
+  dependency, and comes off when the last one closes.
 - The PR says `Closes #<issue>` and is merged with a regular merge commit,
   never squashed.
 - Each issue lists its acceptance criteria. The PR is ready when every one is
