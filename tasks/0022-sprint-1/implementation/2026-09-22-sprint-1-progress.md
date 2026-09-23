@@ -89,3 +89,15 @@ agent delete. Kamran needs to delete feature/0004-sapisidhash-signing from
 origin once, it only holds commits already in the merge.
 Unblocked: nothing yet, #5 still waits on #2.
 Next: #2 net guard.
+
+## 2026-09-23 14:12  #2 net guard, merged in PR #27
+
+Worked: src/core/net.js createNet with an exact origin allowlist, the
+no-network scan over shipped files, the wiring guard. 41 unit tests. Merge
+commit b01562a. Every acceptance plant shown red then reverted.
+Found and fixed before commit: the live scan test was passing vacuously,
+its repo root resolved one directory short so it scanned nothing. Exposed by
+a plant that stayed green, root cause found by printing the file list, both
+attempts logged.
+Unblocked: #5 (its last dependency closed).
+Next: #5 InnerTube client.
