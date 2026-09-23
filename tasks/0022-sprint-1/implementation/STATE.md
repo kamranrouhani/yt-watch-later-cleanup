@@ -1,7 +1,7 @@
 # STATE
 
-CURRENT ISSUE: #10
-WAVE: 2
-LAST COMPLETED: #8
-BLOCKED ON: #3 capture (Kamran). #6, #20 wait on it. #12 needs #7 and #11.
+CURRENT ISSUE: #9
+WAVE: 4
+LAST COMPLETED: #10
+BLOCKED ON: #3 capture (Kamran). #6 and #20 wait on it. Wave 4: #9 and #11 unblocked.
 UPDATED: 2026-09-23

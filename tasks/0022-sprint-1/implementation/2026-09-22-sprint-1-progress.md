@@ -125,3 +125,17 @@ topic-missing guard is redundant with the generic undefined-field path,
 noted as double enforcement.
 Unblocked: nothing on its own (#13 also needs #12, #20 also needs #3).
 Next: #10 storage wrapper and run log, the last workable wave 2 issue.
+
+## 2026-09-23 14:28  #10 storage and run log, merged in PR #30
+
+Worked: storage.js (versioned keys, warnings not throws, quota eviction
+with one retry on any key) and runLog.js (persist per batch, abort keeps
+the record, JSON export). 87 unit tests. Merge commit logged in the PR.
+Found: three planned bites did not bite because the tests could not see
+those paths; closed the gaps, then they bit. Eviction belongs on any quota
+failure per the issue text, not just log writes, implementation changed to
+match. Quota arithmetic for the eviction test had to be measured, not
+guessed.
+Wave 2 is now fully merged except #3, which waits on Kamran's capture.
+Next: nothing is workable without the capture (#6, #20) or wave 4 (#7
+needs #6, #9 and #11 need #5 only, so #9 and #11 ARE workable).
