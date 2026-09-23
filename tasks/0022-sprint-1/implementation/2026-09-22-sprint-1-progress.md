@@ -152,3 +152,19 @@ read, restored, logged.
 Unblocked: #15 still needs #14 and #10 (done) and #9 (now done).
 Next: #11 dashboard-to-tab bridge, the last issue workable without the
 capture.
+
+## 2026-09-23 15:11  #11 tab bridge, merged in PR #32
+
+Worked: content scripts in both worlds with a nonce handshake, the
+dashboard side that finds or opens the Watch Later tab, TabGoneError
+instead of hangs. 119 unit tests plus a real browser spec covering the
+full round trip on a routed fake YouTube. Manual checklist has the real
+signed-in ping.
+Found: this host cannot load real youtube.com (consent redirect), the
+isolated world's globals are invisible from the page world, and extension
+CSP blocks addScriptTag. All worked around in the tests, not in shipped
+code. One self-inflicted bite tooling corruption of page.js, caught and
+repaired, logged.
+Wave 4 is done: #9 and #11 merged. Remaining sprint issues all wait on
+#6 (parser), which waits on #3 (capture, Kamran).
+Next: nothing workable. Blocked on the capture.
