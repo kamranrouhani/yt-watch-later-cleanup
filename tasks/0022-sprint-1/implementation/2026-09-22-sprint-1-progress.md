@@ -113,3 +113,15 @@ with a lookbehind, #2's plants re-proven red.
 Unblocked: #9, #11.
 Next: #8 rules engine (wave 2, no dependencies left) while #3 waits on the
 capture. #6 stays blocked on #3.
+
+## 2026-09-23 14:21  #8 rules engine, merged in PR #29
+
+Worked: ruleModel.js (schema, tables, validate) and rules.js (evaluate),
+69 unit tests, safety cases written first per the safety label. Merge
+commit 6e2a940.
+Found: the readme example's skipped count is 3, not the 1 my first test
+expected; printed the real evaluation and fixed the test. The explicit
+topic-missing guard is redundant with the generic undefined-field path,
+noted as double enforcement.
+Unblocked: nothing on its own (#13 also needs #12, #20 also needs #3).
+Next: #10 storage wrapper and run log, the last workable wave 2 issue.
