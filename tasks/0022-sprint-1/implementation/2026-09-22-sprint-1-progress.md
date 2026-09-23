@@ -101,3 +101,15 @@ a plant that stayed green, root cause found by printing the file list, both
 attempts logged.
 Unblocked: #5 (its last dependency closed).
 Next: #5 InnerTube client.
+
+## 2026-09-23 14:16  #5 innertube client, merged in PR #28
+
+Worked: src/core/innertube.js, three calls, config injected, typed errors,
+51 unit tests. Merge commit 8cd8a6b.
+Found: the no-network guard caught my own first draft, which destructured
+fetch out of deps and held a bare fetch( call. The client now calls
+net.fetch on the injected net instance and the guard pattern was tightened
+with a lookbehind, #2's plants re-proven red.
+Unblocked: #9, #11.
+Next: #8 rules engine (wave 2, no dependencies left) while #3 waits on the
+capture. #6 stays blocked on #3.
