@@ -139,3 +139,16 @@ guessed.
 Wave 2 is now fully merged except #3, which waits on Kamran's capture.
 Next: nothing is workable without the capture (#6, #20) or wave 4 (#7
 needs #6, #9 and #11 need #5 only, so #9 and #11 ARE workable).
+
+## 2026-09-23 14:44  #9 batched remover, merged in PR #31
+
+Worked: src/core/remover.js, frozen plans from createPlan only, batch and
+pause limits, stops on rate limit, auth, rejected edit, abort and any
+error. 101 unit tests. Safety tests written first.
+Found: proving the batch-limit bite deadlocked the suite because my bite
+loop killed its own restore step; the guard really is load bearing, a
+batchSize of 0 with no guard loops forever. Diagnosed by bisect and file
+read, restored, logged.
+Unblocked: #15 still needs #14 and #10 (done) and #9 (now done).
+Next: #11 dashboard-to-tab bridge, the last issue workable without the
+capture.
