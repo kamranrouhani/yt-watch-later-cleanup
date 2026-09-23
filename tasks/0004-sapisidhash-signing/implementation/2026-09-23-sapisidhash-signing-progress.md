@@ -52,3 +52,21 @@ deviations noted: steps 3 and 4 folded into one commit with the reason, and
 two upstream behaviours (first repeated cookie, no space before the equals)
 pinned by tests rather than carried silently.
 Next: push, PR with the acceptance evidence, CI, merge.
+
+Did not work: the first `git push -u origin HEAD` failed with "failed to
+push some refs". My `tail -1` threw away the reason line, so the exact error
+is lost. A retry of the identical command, nothing changed, created the
+branch cleanly, so it was transient. If it recurs, the full output gets
+logged before anything else.
+
+## 2026-09-23 14:06  Merged
+
+PR #26 merged as 1a2e715, issue closed, ticked in #22.
+Rough edge in the close-out, recorded for the record: the first push of this
+branch failed once with "failed to push some refs" and my tail -1 lost the
+reason; the identical retry worked. PR #26 turned out to have merged before
+my local `gh pr merge` reported, so the amended log commit was rejected as
+non-fast-forward and a later bare push recreated the branch on origin after
+GitHub had auto-deleted it. The host denies force and delete pushes, by
+Kamran's config, so the stray branch stays until he deletes it. The log
+amendment was undone locally and re-added as a plain commit instead.

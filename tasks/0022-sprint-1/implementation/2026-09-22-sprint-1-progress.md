@@ -76,3 +76,16 @@ pointed at `tasks/0001-sprint-1/`, fixed to 0022.
 Unblocked: #2, #3, #4, #8, #10.
 Then: #3 tooling done on its branch, draft PR #25, waiting on the capture
 (BLOCKED.md on that branch). Working #4 meanwhile.
+
+## 2026-09-23 14:06  #4 signing, merged in PR #26
+
+Worked: upstream signing ported as src/core/auth.js, pickSapisid plus
+buildAuthHeader with pinned vectors, 20 unit tests. Merge commit 1a2e715.
+Found: upstream's cookie matcher takes the first repeated cookie and needs
+no space before the equals sign; both pinned by tests.
+Did not work: one transient push failure (reason lost to tail -1), and the
+merge race left a stray origin branch the host deny rules will not let the
+agent delete. Kamran needs to delete feature/0004-sapisidhash-signing from
+origin once, it only holds commits already in the merge.
+Unblocked: nothing yet, #5 still waits on #2.
+Next: #2 net guard.
