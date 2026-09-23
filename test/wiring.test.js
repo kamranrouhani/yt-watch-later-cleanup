@@ -81,3 +81,19 @@ test('the manifest still asks for only storage and tabs', () => {
   assert.deepStrictEqual([...manifest.permissions].sort(), ['storage', 'tabs']);
   assert.deepStrictEqual(manifest.host_permissions, ['https://www.youtube.com/*']);
 });
+
+test('the main world entry lists exactly the scripts the page needs, in order', () => {
+  const manifest = readManifest();
+  const main = (manifest.content_scripts || []).find((s) => s.world === 'MAIN');
+  assert.ok(main, 'no MAIN world content script');
+  assert.deepStrictEqual(main.js, [
+    'src/core/constants.js',
+    'src/core/auth.js',
+    'src/core/net.js',
+    'src/core/innertube.js',
+    'content/page.js',
+  ]);
+  const isolated = (manifest.content_scripts || []).find((s) => !s.world);
+  assert.ok(isolated, 'no isolated world content script');
+  assert.deepStrictEqual(isolated.js, ['content/bridge.js']);
+});

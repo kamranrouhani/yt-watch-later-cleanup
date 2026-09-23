@@ -3,12 +3,40 @@
   "name": "Watch Later Cleanup",
   "version": "0.1.0",
   "description": "Clean up a YouTube Watch Later playlist with rules. Preview first, then remove.",
-  "permissions": ["storage", "tabs"],
-  "host_permissions": ["https://www.youtube.com/*"],
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ],
   "action": {
     "default_title": "Open Watch Later Cleanup"
   },
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content/bridge.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "src/core/constants.js",
+        "src/core/auth.js",
+        "src/core/net.js",
+        "src/core/innertube.js",
+        "content/page.js"
+      ],
+      "world": "MAIN"
+    }
+  ]
 }
