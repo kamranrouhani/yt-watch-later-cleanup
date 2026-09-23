@@ -12,7 +12,7 @@ const NET_MODULE = 'src/core/net.js';
 const ALLOWED_ORIGINS = new Set(['https://www.youtube.com', 'https://www.googleapis.com']);
 
 const CALL_PATTERNS = [
-  [/\bfetch\(/, 'fetch('],
+  [/(?<![.\w])fetch\(/, 'fetch('],
   [/XMLHttpRequest/, 'XMLHttpRequest'],
   [/sendBeacon/, 'sendBeacon'],
   [/\bWebSocket\b/, 'WebSocket'],
