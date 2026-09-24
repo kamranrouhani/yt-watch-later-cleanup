@@ -177,13 +177,22 @@ test('a default sleep is used when none is injected', async () => {
   const plan = createPlan(previewOf(2), { entries: 2 });
   const realSetTimeout = globalThis.setTimeout;
   const scheduled = [];
+  let sleepResolved = false;
+  let secondCallAfterSleep = null;
   globalThis.setTimeout = (fn, ms, ...rest) => {
     scheduled.push(ms);
-    return realSetTimeout(fn, 0, ...rest);
+    return realSetTimeout(() => { sleepResolved = true; fn(); }, 0, ...rest);
+  };
+  const recording = {
+    async editPlaylist(actions) {
+      if (innertube.calls.length === 1) secondCallAfterSleep = sleepResolved;
+      return innertube.editPlaylist(actions);
+    },
   };
   try {
-    const result = await run(plan, { innertube, batchSize: 1, pauseMs: 5 });
+    const result = await run(plan, { innertube: recording, batchSize: 1, pauseMs: 5 });
     assert.deepStrictEqual(scheduled, [5]);
+    assert.strictEqual(secondCallAfterSleep, true);
     assert.strictEqual(result.status, 'complete');
   } finally {
     globalThis.setTimeout = realSetTimeout;
