@@ -37,40 +37,32 @@ READ THESE, IN ORDER, BEFORE ANYTHING ELSE
 WHAT IS MERGED
   #1 scaffold (PR #23), #4 signing (#26), #2 net guard (#27),
   #5 innertube client (#28), #8 rules (#29), #10 storage and run log
-  (#30), #9 batched remover (#31), #11 tab bridge (#32). All regular merge
-  commits, CI green on each. On main now: 119 unit tests and 6 browser
-  assertions pass. Per-issue folders tasks/0001, 0002, 0003, 0004, 0005,
-  0008, 0009, 0010, 0011 each hold a plan, an append-only progress log and
-  a pre-merge review.
+  (#30), #9 batched remover (#31), #11 tab bridge (#32), #3 capture spike
+  (#25, merged 2026-09-24). All regular merge commits, CI green on each.
+  On main now: 140 unit tests and 7 browser assertions pass. The real
+  Watch Later fixtures from Kamran's capture run are committed under
+  test/fixtures/captured/2026-09-24/ with their README and denylist.
+  Per-issue folders tasks/0001, 0002, 0003, 0004, 0005, 0008, 0009, 0010,
+  0011 each hold a plan, an append-only progress log and a pre-merge review.
 
 WHERE IT STOPS
-  Everything left in sprint 1 chains through #6, the playlist parser, and
-  #6 is written against real captured Watch Later responses that only
-  Kamran can produce (issue #3). Branch feature/0003-capture-spike on draft
-  PR #25 already holds the capture snippet, the scrubber and the fixture
-  guard test. Its plan
-  tasks/0003-capture-spike/plans/2026-09-22-capture-spike.md is done
-  through step 8.
+  #3 is done: the fixtures are in, findings are in
+  tasks/0003-capture-spike/implementation/findings.md, docs/RESEARCH.md
+  carries the capture's answers. Two loose ends sit before #6, neither
+  blocking: the #11 ensureTab fix (Kamran's checklist step 5 found that a
+  closed and reverted Watch Later tab is not found by the exact-URL query,
+  so the ping rejects with "Could not establish connection"; fix on a fresh
+  branch from main), and #24, keep dev files out of the loaded extension.
+  #6, the parser, is next in the chain and is now unblocked: it is written
+  against the real fixtures.
 
 FIRST THING TO DO
-  Check for a capture file:
+  Run the orientation script, then pick the current issue from STATE.md.
 
-      ls test/fixtures/captured/raw/wl-capture-*.json
+      bash tasks/0022-sprint-1/scripts/status.sh
 
-  Present: resume issue #3 at step 9 of its plan (scrub, commit fixtures
-  with their README, answer the five questions in docs/RESEARCH.md in a
-  findings.md with exact JSON paths, update RESEARCH.md, review, take the
-  PR out of draft, merge as a regular merge). Then start #6.
-
-  Absent: tell Kamran in your first reply, in this shape:
-    1. the capture is the one thing that unblocks the sprint, with the
-       four numbered steps from open-items-for-kamran.md and the raw URL
-       for tools/capture.js,
-    2. the two manual checklists he can run meanwhile, with their paths,
-    3. the stray branch to delete on GitHub, one click.
-  Then work what does not need the capture: #24, keep dev files out of the
-  loaded extension, is open and unblocked. If nothing at all is workable,
-  say so and stop.
+  Working order for the next issues: the #11 ensureTab fix, #24, then #6
+  and #7, then the dashboard chain #12 to #16. #17 needs Kamran live.
 
 HOW KAMRAN PASSES YOU THINGS
   - Capture or export files by scp to this host, for example:
@@ -84,9 +76,15 @@ HOW KAMRAN PASSES YOU THINGS
 YOU ARE ALLOWED TO DO GIT AND GITHUB WRITES
   Unchanged from session 1 and still standing: branches, commits, pushes to
   origin only, PRs, regular merge commits (gh pr merge --merge), issue
-  housekeeping, ticking #22. Never squash or rebase merges, never
-  force-push main, never push to another remote, never change git identity.
-  If a push or merge is rejected, stop and report the exact error.
+  housekeeping, ticking #22, and the kanban board (hermes kanban, board
+  yt-cleanup). Never squash or rebase merges, never force-push main, never
+  push to another remote, never change git identity.
+  Two session 2 amendments, from Kamran directly:
+    - On an UNMERGED branch, prefer rebase over merging main in. Approved
+      once for PR #25 with the rewritten-history push; per merge, not
+      blanket.
+    - Unblocking a kanban card whose needs_input has arrived is fine;
+      record why in the unblock reason.
 
 RULES THAT GET WORK REVERTED
 

@@ -221,3 +221,23 @@ with the stray-branch housekeeping (feature/0004-sapisidhash-signing) below.
 Blocked: the #11 ensureTab fix and #24 remain open; both are branchable from
 main without the capture. The stray branch deletion still waits on Kamran.
 Next: housekeeping commit for these logs, then the ensureTab fix, then #24.
+
+## 2026-09-24 05:05  session 2 wrap: handover files brought current
+
+Documented: open-items-for-kamran.md rewritten, the capture and the two
+checklists move to a "done, for the record" section with Kamran's actual
+results, the branch deletion stays open. HANDOVER.md's standings table now
+shows #3 merged via PR #25 and points at #6 as next. KICKOFF-2.md updated
+in place: merged list, where-it-stops, first-thing-to-do and the git
+permissions all reflect the post-#25 state, the two session 2 amendments
+(rebase preference on unmerged branches, kanban unblock permission) are
+recorded there. Tracking issue #22 ticked for #3 with the PR reference.
+Verification after the recording: worktree clean, main level with origin,
+CI green on 0ef44af.
+Also from session 2, already recorded earlier: BLOCKED.md #3 entries marked
+resolved with Kamran's checklist findings, STATE.md points at #6, card
+t_164ddaa5 done on the kanban board, review at
+tasks/0003-capture-spike/reviews/2026-09-24-pre-merge-review.md.
+Left for the next session: the #11 ensureTab fix, #24, then #6. Kamran's
+side: only the one-click branch deletion on GitHub remains, everything
+capture-related is closed.

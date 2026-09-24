@@ -8,6 +8,8 @@ files this points to.
 Paste the contents of `tasks/0022-sprint-1/KICKOFF-2.md` as the first
 message. It points the new session at everything below and at what has
 already merged. `KICKOFF.md` is the session 1 prompt, kept for the record.
+The session 2 prompt already reflects the state after PR #25: issue #3
+merged, #6 next, #24 and the #11 ensureTab fix first if you want them.
 
 ## Where things are
 
@@ -36,9 +38,9 @@ tasks/000N-<slug>/                       one folder per issue, same number as th
 | Local | `/root/projects/yt-watch-later-playlist-cleanup` |
 | Sprint 1 | issues #1 to #17, tracking issue #22 |
 | Sprint 2 | issues #18 to #21 |
-| Merged | #1, #2, #4, #5, #8, #9, #10, #11 (PRs 23, 26 to 32) |
-| Next | #3 resumes at step 9 of its plan when the capture file lands. #24 is workable while waiting |
-| Waiting on Kamran | the capture run, two manual checklists, one branch deletion. All in `tasks/0022-sprint-1/implementation/open-items-for-kamran.md` |
+| Merged | #1, #2, #3, #4, #5, #8, #9, #10, #11 (PRs 23 to 32, then #25 for #3) |
+| Next | #6, the playlist parser, written against the real fixtures merged in PR #25. Before it: the #11 `ensureTab` fix (Kamran's checklist step 5 found it) and #24 |
+| Waiting on Kamran | one branch deletion on GitHub (`feature/0004-sapisidhash-signing`). Everything capture-related is done and merged |
 
 ## Environment on this host
 
