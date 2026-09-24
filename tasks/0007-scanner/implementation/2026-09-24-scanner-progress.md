@@ -82,3 +82,38 @@ unaffected since `scanner.js` is not wired into the manifest (dashboard
 consumes it through CommonJS in a later issue, same as
 `playlistParser.js`).
 Next: step 5, self review, PR.
+
+## 2026-09-24 09:59  Round 1 review fixes: sort drift check, seen-token guard, throttle, aborted fingerprint
+
+Worked: superseding plan written at
+`tasks/0007-scanner/plans/2026-09-24-1000-scanner-round1-fixes.md`
+recording the three restored upstream pieces (findings 1-3) and the
+aborted-scan fingerprint decision (finding 4), each cited to the upstream
+lines it comes from. `scan` now checks the sort state of the first page
+it actually reads for pagination (`SortDriftError`, a
+`SortNotVerifiedError` subclass, thrown before any entry is added when
+that page's order is not 2), tracks `seenTokens` and stops pagination on
+a repeated token instead of refetching forever, sleeps
+`scanPageThrottleMs` (default 50, upstream's `scanPageThrottleMs`)
+between continuation fetches, and sets `fingerprint: null` whenever
+`status !== 'complete'` so an aborted scan's partial entries can never be
+mistaken for a complete scan by #14's stale-preview check. Finding 5
+(the port-then-restructure rule was skipped, and 1-3 were lost as a
+result): recorded here, in the superseding plan, and the fix commit for
+this entry cites the upstream lines it restores rather than repeating the
+port-then-restructure split retroactively.
+Did not work: the first version of the sort-drift test browsed the real
+`page-1.json` fixture directly for the pagination-box tests, which broke
+once the drift check landed, because that fixture's own sort menu really
+does report order 1 selected (the account's actual state when it was
+captured, noted in the original plan). Added `withOldestSortSelected`, a
+test-only clone that flips which sort item is marked selected, so the
+pagination tests exercise a drift-free page the way a real oldest-first
+scan would see one, without touching the fixture file itself.
+Verification: `node --test test/scanner.test.js` prints `# tests 16`,
+`# pass 16`, `# fail 0` (12 from step 4 plus 4 new: sort-drift-on-scanned-
+page, seen-token guard, throttle-waits, throttle-default-matches-
+upstream). `npm test` prints `# tests 191`, `# pass 191`, `# fail 0`.
+`npm run check` prints `all files parse`. `npm run test:browser` prints 8
+`ok` lines, unaffected.
+Next: push, update PR #39, hand back to `metis-review` round 2.
