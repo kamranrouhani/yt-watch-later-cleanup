@@ -1,4 +1,4 @@
-# Progress: 2026-09-24-ensuretab-ready
+# Progress: 2026-09-24-1-ensuretab-ready-e2e-probe
 
 Append only. One entry at the end of every plan step. Never rewrite, reorder
 or delete an entry, including the ones recording a mistake.
@@ -16,52 +16,13 @@ Take the timestamp from `date '+%Y-%m-%d %H:%M'`.
 
 <!-- append entries below this line -->
 
-## 2026-09-24 04:55  Step 1: Plan
+## 2026-09-24 05:32  Step 1: end-to-end readiness probe
 
-Worked: plan and this log, from main at 6acc848.
-Next: step 2, unit tests first.
-
-## 2026-09-24 05:05  Step 2: Unit tests first
-
-Worked: added `test/tabbridge.test.js` cases for a freshly created tab
-with no receiver yet, a reused tab not yet ready, a Watch Later tab with
-extra query parameters, and a non-Watch-Later tab never picked. Ran them
-against the unmodified `ensureTab()`: 4 of 12 failed for the expected
-reasons (no wait on readiness, exact-URL match missing the query-parameter
-case).
-Verification: `node --test test/tabbridge.test.js` `# pass 8` `# fail 4`.
-Next: step 3, implement the fix in `src/core/tabBridge.js`.
-
-## 2026-09-24 05:20  Step 3: `src/core/tabBridge.js`, readiness probe v1
-
-Worked: added `isWatchLaterUrl()` (parsed `URL`, matches hostname,
-pathname, `list=WL`) and a poll loop that sent an empty message
-(`chromeApi.tabs.sendMessage(tabId, {})`) and treated a non-throwing
-result as ready. All 12 unit tests passed; bit the readiness wait (skipped
-it) and 3 tests correctly went red; bit the URL match (`&& false`) and 5
-went red.
-Verification: `npm test` `# pass 145` `# fail 0`; `npm run check`
-`all files parse`.
-Next: step 4, browser spec.
-
-## 2026-09-24 05:32  External review: probe does not reach page.js
-
-Did not work: an external review of the plan and code found that the
-empty-message probe only proves `content/bridge.js`'s
-`chrome.runtime.onMessage` listener is registered, not that
-`content/page.js` has the nonce from the `hello` handshake yet. Before the
-nonce is set, `page.js` line 66 silently drops every real request, so
-`ensureTab()` could resolve before a real call would actually get an
-answer. Confirmed by reading `content/page.js`: the nonce check gates
-`handleRequest` entirely, and there is no separate "listener attached"
-signal from that world.
-Wrote a superseding plan,
-`plans/2026-09-24-1-ensuretab-ready-e2e-probe.md`, replacing the probe
-with a real `wlRequest` (`kind: '__wlReadyProbe'`) that only gets a
-`wlResponse` once `page.js` is actually running `handleRequest`, which
-requires the nonce. `content/bridge.js` and `content/page.js` need no
-changes: an unknown `kind` already produces an error response through the
-existing path.
+Worked: replaced the empty-message probe with a real `wlRequest`
+(`kind: '__wlReadyProbe'`), which only gets a `wlResponse` once
+`content/page.js` is running `handleRequest`, which requires the nonce.
+`content/bridge.js` and `content/page.js` need no changes: an unknown
+`kind` already produces an error response through the existing path.
 Rewrote the `test/tabbridge.test.js` fake chrome to a three-stage
 `contentState` (`none`, `listening`, `ready`) matching what
 `sendMessage` actually does at each real stage, and added two tests that
@@ -77,9 +38,9 @@ Verification: `node --test test/tabbridge.test.js` 5 consecutive runs,
 147` `# fail 0` each time; `npm run check` `all files parse`. Bit the real
 probe back down to the empty-message version and reran:
 `# pass 3` `# fail 11`, confirming the new tests do distinguish the two.
-Next: step 4, browser spec close-then-reconnect case.
+Next: step 2, browser spec close-then-reconnect case.
 
-## 2026-09-24 05:45  Step 4: `test/browser/bridge.spec.js`
+## 2026-09-24 05:45  Step 2: `test/browser/bridge.spec.js`
 
 Did not work, twice: first attempt called `bridge.request('ping', null)`
 right after `chrome.tabs.create` inside the dashboard's own
@@ -106,9 +67,9 @@ Verification: `node test/browser/bridge.spec.js` five assertions all `ok`,
 including "closing the tab then calling ensureTab again opens a fresh one
 and ping succeeds"; `npm run test:browser` full run green, 8 `ok` lines
 across `load.spec.js`, `bridge.spec.js`, `capture.spec.js`.
-Next: step 5, manual checklist, review, PR.
+Next: step 3, manual checklist, review, PR.
 
-## 2026-09-24 05:56  Step 5: manual checklist, self review
+## 2026-09-24 05:56  Step 3: manual checklist, self review
 
 Worked: wrote `implementation/manual-check.md` rerunning #11's step 5
 scenario plus the new query-parameter reuse case. Wrote the pre-merge
@@ -121,4 +82,24 @@ Verification: `npm test` and `npm run test:browser` both green, per the
 review file's own verification section.
 Next: push, open the PR, hand off for review.
 
+## 2026-09-24 06:05  Round 1 review fix: closed tab no longer counts as ready
 
+Did not work: review round 1 found that `probeOnce`'s pending entry
+resolved `true` on any `reject`, meant to handle page.js's error reply to
+an unknown probe kind. But `tabs.onRemoved` also calls `reject` on every
+pending entry with a `TabGoneError`, so a tab closed while `ensureTab()`
+is still waiting on readiness was reported as ready, with `connectedTabId`
+already null. Added a test that closes the tab mid `waitUntilReady`: it
+failed as expected against the unfixed code
+(`AssertionError: Missing expected rejection (TabGoneError)`).
+Worked: `probeOnce`'s `reject` now checks whether the error is a
+`TabGoneError` and re-throws it through the outer promise instead of
+resolving `true`; only a real page reply (an empty-arg `reject()` from the
+message handler, or the probe's own timeout) counts toward readiness.
+Removed the mock-narrating comment in `test/tabbridge.test.js`'s fake
+`sendMessage`; the three content states are already documented in the
+superseding plan.
+Verification: `node --test test/tabbridge.test.js` `# pass 15` `# fail 0`
+(new test included); `npm test` `# pass 148` `# fail 0`; `npm run check`
+`all files parse`.
+Next: push, request review round 2.
