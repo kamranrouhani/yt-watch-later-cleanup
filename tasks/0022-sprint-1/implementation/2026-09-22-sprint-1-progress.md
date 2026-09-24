@@ -241,3 +241,23 @@ tasks/0003-capture-spike/reviews/2026-09-24-pre-merge-review.md.
 Left for the next session: the #11 ensureTab fix, #24, then #6. Kamran's
 side: only the one-click branch deletion on GitHub remains, everything
 capture-related is closed.
+
+## 2026-09-24 04:55  switch to one kanban card per issue
+
+Decided: the rest of sprint 1 runs as one card per issue on board
+yt-cleanup, written up in plans/2026-09-24-card-execution-amendment.md and
+docs/ORCHESTRATION.md. Reason: session 1's single loop cost about 34M
+tokens for 135k of output, because every call resent a context that grew to
+715k.
+Did not work: the #3 pilot card. Its first run blocked correctly on the
+capture. The retry then failed twice to start, because the main checkout
+had feature/0003-capture-spike checked out and git refuses a second
+worktree on the same branch. The card was finished by hand and its
+completion was refused twice for a missing published_pr. So the review and
+merge half of the flow has not run yet. Both causes are now rules: never
+check a card's branch out in the main checkout, and the review run
+completes with the PR URL.
+Filed: #33 for the ensureTab bug from Kamran's #11 checklist step 5, in the
+sprint 1 milestone and ticked in #22. Removed blocked from #6, since #3 is
+closed. Moved #24 into the sprint 1 milestone so the loop query finds it.
+Next: cards for #33, #24 and #6, chained in that order, merge: auto.
