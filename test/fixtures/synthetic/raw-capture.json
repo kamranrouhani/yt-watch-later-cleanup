@@ -2,92 +2,427 @@
   "format": "wl-capture/1",
   "capturedAt": "2026-09-22T21:00:00.000Z",
   "pageUrl": "/playlist?list=WL",
-  "client": { "clientVersion": "2.20260922.01.00", "hl": "en", "gl": "DE" },
+  "client": {
+    "clientVersion": "2.20260922.01.00",
+    "hl": "en",
+    "gl": "DE"
+  },
   "browseParams": "wgYCCAA%3D",
-  "summary": { "pages": 2 },
+  "summary": {
+    "pages": 2
+  },
   "responses": [
     {
       "continuation": null,
       "response": {
         "responseContext": {
           "visitorData": "CgtQbGFudGVkVmlzaXRvcg%3D%3D",
-          "serviceTrackingParams": [{ "service": "GFEEDBACK", "params": [{ "key": "logged_in", "value": "1" }, { "key": "e", "value": "23804281,23946420" }] }],
-          "mainAppWebResponseContext": { "datasyncId": "PlantedDatasync123||", "loggedOut": false }
+          "serviceTrackingParams": [
+            {
+              "service": "GFEEDBACK",
+              "params": [
+                {
+                  "key": "logged_in",
+                  "value": "1"
+                },
+                {
+                  "key": "e",
+                  "value": "23804281,23946420"
+                }
+              ]
+            }
+          ],
+          "mainAppWebResponseContext": {
+            "datasyncId": "PlantedDatasync123||",
+            "loggedOut": false
+          }
         },
         "trackingParams": "CAAQhGciEwjPlantedTracking",
         "header": {
           "playlistHeaderRenderer": {
-            "ownerText": { "runs": [{ "text": "Planted Person", "navigationEndpoint": { "browseEndpoint": { "browseId": "UCplantedOwnerChannel0001", "canonicalBaseUrl": "/@PlantedPerson" } } }] },
-            "ownerEndpoint": { "browseEndpoint": { "browseId": "UCplantedOwnerChannel0001" } },
-            "descriptionText": { "simpleText": "Contact planted.person@example.com" }
+            "ownerText": {
+              "runs": [
+                {
+                  "text": "Planted Person",
+                  "navigationEndpoint": {
+                    "browseEndpoint": {
+                      "browseId": "UCplantedOwnerChannel0001",
+                      "canonicalBaseUrl": "/@PlantedPerson"
+                    }
+                  }
+                }
+              ]
+            },
+            "ownerEndpoint": {
+              "browseEndpoint": {
+                "browseId": "UCplantedOwnerChannel0001"
+              }
+            },
+            "descriptionText": {
+              "simpleText": "Contact planted.person@example.com"
+            }
           }
         },
         "sidebar": {
-          "playlistSidebarRenderer": { "items": [{ "playlistSidebarPrimaryInfoRenderer": {
-            "stats": [{ "runs": [{ "text": "3" }, { "text": " videos" }] }],
-            "owner": { "videoOwnerRenderer": {
-              "title": { "runs": [{ "text": "Planted Person" }] },
-              "thumbnail": { "thumbnails": [{ "url": "https://yt3.ggpht.com/planted-avatar=s88", "width": 88, "height": 88 }] }
-            } }
-          } }] }
+          "playlistSidebarRenderer": {
+            "items": [
+              {
+                "playlistSidebarPrimaryInfoRenderer": {
+                  "stats": [
+                    {
+                      "runs": [
+                        {
+                          "text": "3"
+                        },
+                        {
+                          "text": " videos"
+                        }
+                      ]
+                    }
+                  ],
+                  "owner": {
+                    "videoOwnerRenderer": {
+                      "title": {
+                        "runs": [
+                          {
+                            "text": "Planted Person"
+                          }
+                        ]
+                      },
+                      "thumbnail": {
+                        "thumbnails": [
+                          {
+                            "url": "https://yt3.ggpht.com/planted-avatar=s88",
+                            "width": 88,
+                            "height": 88
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
         },
-        "contents": { "twoColumnBrowseResultsRenderer": { "tabs": [{ "tabRenderer": { "content": { "sectionListRenderer": { "contents": [{ "itemSectionRenderer": { "contents": [{ "playlistVideoListRenderer": {
-          "playlistId": "WL",
-          "contents": [
-            { "playlistVideoRenderer": {
-              "videoId": "PlantVid001",
-              "thumbnail": { "thumbnails": [{ "url": "https://i.ytimg.com/vi/PlantVid001/hqdefault.jpg?sqp=planted", "width": 168, "height": 94 }] },
-              "title": { "runs": [{ "text": "Secret Recipe Collection" }], "accessibility": { "accessibilityData": { "label": "Secret Recipe Collection by Kitchen Planted 12 minutes, 34 seconds" } } },
-              "index": { "simpleText": "1" },
-              "shortBylineText": { "runs": [{ "text": "Kitchen Planted", "navigationEndpoint": { "browseEndpoint": { "browseId": "UCplantedKitchenChannel01", "canonicalBaseUrl": "/@KitchenPlanted" } } }] },
-              "lengthText": { "simpleText": "12:34" },
-              "navigationEndpoint": { "clickTrackingParams": "CPlantedClick", "commandMetadata": { "webCommandMetadata": { "url": "/watch?v=PlantVid001&list=WL&index=1" } }, "watchEndpoint": { "videoId": "PlantVid001", "playlistId": "WL", "index": 0, "params": "OAI%3D", "playerParams": "8AEB" } },
-              "setVideoId": "PLANTSETID000001",
-              "isPlayable": true,
-              "menu": { "menuRenderer": { "items": [{ "menuServiceItemRenderer": { "serviceEndpoint": { "playlistEditEndpoint": { "playlistId": "WL", "params": "CAFAAQ%3D%3D", "actions": [{ "action": "ACTION_REMOVE_VIDEO", "setVideoId": "PLANTSETID000001" }] } } } }] } },
-              "thumbnailOverlays": [
-                { "thumbnailOverlayResumePlaybackRenderer": { "percentDurationWatched": 100 } },
-                { "thumbnailOverlayTimeStatusRenderer": { "text": { "simpleText": "12:34" }, "style": "DEFAULT" } }
-              ],
-              "videoInfo": { "runs": [{ "text": "1.2K views" }, { "text": " • " }, { "text": "3 years ago" }] }
-            } },
-            { "playlistVideoRenderer": {
-              "videoId": "PlantVid002",
-              "title": { "runs": [{ "text": "[Private video]" }] },
-              "index": { "simpleText": "2" },
-              "setVideoId": "PLANTSETID000002",
-              "isPlayable": false,
-              "unplayableText": { "simpleText": "[Private video]" },
-              "menu": { "menuRenderer": { "items": [{ "menuServiceItemRenderer": { "serviceEndpoint": { "playlistEditEndpoint": { "actions": [{ "action": "ACTION_REMOVE_VIDEO", "setVideoId": "PLANTSETID000002" }] } } } }] } }
-            } },
-            { "playlistVideoRenderer": {
-              "videoId": "PlantVid003",
-              "title": { "simpleText": "Tom" },
-              "shortBylineText": { "runs": [{ "text": "Ann", "navigationEndpoint": { "browseEndpoint": { "browseId": "UCplantedAnnChannel000001" } } }] },
-              "setVideoId": "PLANTSETID000003",
-              "navigationEndpoint": { "commandMetadata": { "webCommandMetadata": { "url": "/shorts/PlantVid003" } }, "reelWatchEndpoint": { "videoId": "PlantVid003" } },
-              "publishedTimeText": { "simpleText": "Tomorrow, Annually" },
-              "thumbnailOverlays": [{ "thumbnailOverlayResumePlaybackRenderer": { "percentDurationWatched": 37 } }, { "thumbnailOverlayTimeStatusRenderer": { "text": { "simpleText": "SHORTS" }, "style": "SHORTS" } }]
-            } },
-            { "continuationItemRenderer": { "continuationEndpoint": { "continuationCommand": { "token": "4qmFsgPlantedContinuationToken2" } } } }
-          ]
-        } }] } }] } } } }] } }
+        "contents": {
+          "twoColumnBrowseResultsRenderer": {
+            "tabs": [
+              {
+                "tabRenderer": {
+                  "content": {
+                    "sectionListRenderer": {
+                      "contents": [
+                        {
+                          "itemSectionRenderer": {
+                            "contents": [
+                              {
+                                "playlistVideoListRenderer": {
+                                  "playlistId": "WL",
+                                  "contents": [
+                                    {
+                                      "playlistVideoRenderer": {
+                                        "videoId": "PlantVid001",
+                                        "thumbnail": {
+                                          "thumbnails": [
+                                            {
+                                              "url": "https://i.ytimg.com/vi/PlantVid001/hqdefault.jpg?sqp=planted",
+                                              "width": 168,
+                                              "height": 94
+                                            }
+                                          ]
+                                        },
+                                        "title": {
+                                          "runs": [
+                                            {
+                                              "text": "Secret Recipe Collection"
+                                            }
+                                          ],
+                                          "accessibility": {
+                                            "accessibilityData": {
+                                              "label": "Secret Recipe Collection by Kitchen Planted 12 minutes, 34 seconds"
+                                            }
+                                          }
+                                        },
+                                        "index": {
+                                          "simpleText": "1"
+                                        },
+                                        "shortBylineText": {
+                                          "runs": [
+                                            {
+                                              "text": "Kitchen Planted",
+                                              "navigationEndpoint": {
+                                                "browseEndpoint": {
+                                                  "browseId": "UCplantedKitchenChannel01",
+                                                  "canonicalBaseUrl": "/@KitchenPlanted"
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "lengthText": {
+                                          "simpleText": "12:34"
+                                        },
+                                        "navigationEndpoint": {
+                                          "clickTrackingParams": "CPlantedClick",
+                                          "commandMetadata": {
+                                            "webCommandMetadata": {
+                                              "url": "/watch?v=PlantVid001&list=WL&index=1"
+                                            }
+                                          },
+                                          "watchEndpoint": {
+                                            "videoId": "PlantVid001",
+                                            "playlistId": "WL",
+                                            "index": 0,
+                                            "params": "OAI%3D",
+                                            "playerParams": "8AEB"
+                                          }
+                                        },
+                                        "setVideoId": "PLANTSETID000001",
+                                        "isPlayable": true,
+                                        "menu": {
+                                          "menuRenderer": {
+                                            "items": [
+                                              {
+                                                "menuServiceItemRenderer": {
+                                                  "serviceEndpoint": {
+                                                    "playlistEditEndpoint": {
+                                                      "playlistId": "WL",
+                                                      "params": "CAFAAQ%3D%3D",
+                                                      "actions": [
+                                                        {
+                                                          "action": "ACTION_REMOVE_VIDEO",
+                                                          "setVideoId": "PLANTSETID000001"
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "thumbnailOverlays": [
+                                          {
+                                            "thumbnailOverlayResumePlaybackRenderer": {
+                                              "percentDurationWatched": 100
+                                            }
+                                          },
+                                          {
+                                            "thumbnailOverlayTimeStatusRenderer": {
+                                              "text": {
+                                                "simpleText": "12:34"
+                                              },
+                                              "style": "DEFAULT"
+                                            }
+                                          }
+                                        ],
+                                        "videoInfo": {
+                                          "runs": [
+                                            {
+                                              "text": "1.2K views"
+                                            },
+                                            {
+                                              "text": " • "
+                                            },
+                                            {
+                                              "text": "3 years ago"
+                                            }
+                                          ]
+                                        },
+                                        "playbackProbe": {
+                                          "url": "https://rr3---sn-h0jeened.googlevideo.com/initplayback?source=youtube&id=abc&ip=2003%3Ac6%3A4f33%3A1134&mt=1790218875"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "playlistVideoRenderer": {
+                                        "videoId": "PlantVid002",
+                                        "title": {
+                                          "runs": [
+                                            {
+                                              "text": "[Private video]"
+                                            }
+                                          ]
+                                        },
+                                        "index": {
+                                          "simpleText": "2"
+                                        },
+                                        "setVideoId": "PLANTSETID000002",
+                                        "isPlayable": false,
+                                        "unplayableText": {
+                                          "simpleText": "[Private video]"
+                                        },
+                                        "menu": {
+                                          "menuRenderer": {
+                                            "items": [
+                                              {
+                                                "menuServiceItemRenderer": {
+                                                  "serviceEndpoint": {
+                                                    "playlistEditEndpoint": {
+                                                      "actions": [
+                                                        {
+                                                          "action": "ACTION_REMOVE_VIDEO",
+                                                          "setVideoId": "PLANTSETID000002"
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "playlistVideoRenderer": {
+                                        "videoId": "PlantVid003",
+                                        "title": {
+                                          "simpleText": "Tom"
+                                        },
+                                        "shortBylineText": {
+                                          "runs": [
+                                            {
+                                              "text": "Ann",
+                                              "navigationEndpoint": {
+                                                "browseEndpoint": {
+                                                  "browseId": "UCplantedAnnChannel000001"
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "setVideoId": "PLANTSETID000003",
+                                        "navigationEndpoint": {
+                                          "commandMetadata": {
+                                            "webCommandMetadata": {
+                                              "url": "/shorts/PlantVid003"
+                                            }
+                                          },
+                                          "reelWatchEndpoint": {
+                                            "videoId": "PlantVid003"
+                                          }
+                                        },
+                                        "publishedTimeText": {
+                                          "simpleText": "Tomorrow, Annually"
+                                        },
+                                        "thumbnailOverlays": [
+                                          {
+                                            "thumbnailOverlayResumePlaybackRenderer": {
+                                              "percentDurationWatched": 37
+                                            }
+                                          },
+                                          {
+                                            "thumbnailOverlayTimeStatusRenderer": {
+                                              "text": {
+                                                "simpleText": "SHORTS"
+                                              },
+                                              "style": "SHORTS"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "continuationItemRenderer": {
+                                        "continuationEndpoint": {
+                                          "continuationCommand": {
+                                            "token": "4qmFsgPlantedContinuationToken2"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
       }
     },
     {
       "continuation": "4qmFsgPlantedContinuationToken2",
       "response": {
-        "responseContext": { "visitorData": "CgtQbGFudGVkVmlzaXRvcg%3D%3D" },
-        "onResponseReceivedActions": [{ "clickTrackingParams": "CPlantedClick2", "appendContinuationItemsAction": { "continuationItems": [
-          { "playlistVideoRenderer": {
-            "videoId": "PlantVid001",
-            "title": { "runs": [{ "text": "Secret Recipe Collection" }] },
-            "shortBylineText": { "runs": [{ "text": "Kitchen Planted" }] },
-            "setVideoId": "PLANTSETID000004",
-            "navigationEndpoint": { "watchEndpoint": { "videoId": "PlantVid001", "params": "UGxhbnRWaWQwMDE%3D" } },
-            "shareEntity": { "serializedShareEntity": "CgtQbGFudFZpZDAwMQ%3D%3D" }
-          } }
-        ] } }]
+        "responseContext": {
+          "visitorData": "CgtQbGFudGVkVmlzaXRvcg%3D%3D"
+        },
+        "onResponseReceivedActions": [
+          {
+            "clickTrackingParams": "CPlantedClick2",
+            "appendContinuationItemsAction": {
+              "continuationItems": [
+                {
+                  "playlistVideoRenderer": {
+                    "videoId": "PlantVid001",
+                    "title": {
+                      "runs": [
+                        {
+                          "text": "Secret Recipe Collection"
+                        }
+                      ]
+                    },
+                    "shortBylineText": {
+                      "runs": [
+                        {
+                          "text": "Kitchen Planted"
+                        }
+                      ]
+                    },
+                    "setVideoId": "PLANTSETID000004",
+                    "navigationEndpoint": {
+                      "watchEndpoint": {
+                        "videoId": "PlantVid001",
+                        "params": "UGxhbnRWaWQwMDE%3D"
+                      }
+                    },
+                    "shareEntity": {
+                      "serializedShareEntity": "CgtQbGFudFZpZDAwMQ%3D%3D"
+                    }
+                  }
+                },
+                {
+                  "playlistVideoRenderer": {
+                    "videoId": "PlantVid004",
+                    "title": {
+                      "runs": [
+                        {
+                          "text": "[Deleted video]"
+                        }
+                      ]
+                    },
+                    "index": {
+                      "simpleText": "4"
+                    },
+                    "shortBylineText": {
+                      "runs": [
+                        {
+                          "text": "Channel 5",
+                          "navigationEndpoint": {
+                            "browseEndpoint": {
+                              "browseId": "UCplantedChannel8Name01",
+                              "canonicalBaseUrl": "/@Channel8like"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "setVideoId": "PLANTSETID000005",
+                    "lastUpdated": "3 years ago"
+                  }
+                }
+              ]
+            }
+          }
+        ]
       }
     }
   ]

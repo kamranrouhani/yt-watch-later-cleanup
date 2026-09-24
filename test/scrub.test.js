@@ -96,12 +96,28 @@ test('image urls become a placeholder', () => {
   assert.ok(!/ggpht\.com|ytimg\.com\/vi\//.test(text));
 });
 
+test('googlevideo playback urls never survive, they carry the ip address', () => {
+  const scrubbed = scrubCapture(RAW);
+  const text2 = JSON.stringify({ meta: scrubbed.meta, pages: scrubbed.pages });
+  assert.ok(!text2.includes('googlevideo.com/initplayback'));
+  assert.ok(text2.includes('https://googlevideo.com/placeholder'));
+});
+
 test('the denylist holds sha256 hashes of real values of four characters or more', () => {
   const sha = (v) => crypto.createHash('sha256').update(v).digest('hex');
   assert.ok(out.denylist.every((h) => /^[0-9a-f]{64}$/.test(h)));
   assert.ok(out.denylist.includes(sha('Secret Recipe Collection')));
   assert.ok(out.denylist.includes(sha('PlantVid001')));
   assert.ok(!out.denylist.includes(sha('Tom')));
+});
+
+test('a real channel whose name duplicates a placeholder number does not break the scrub', () => {
+  assert.doesNotThrow(() => scrubCapture(RAW));
+  const again = scrubCapture(RAW);
+  const planted = again.pages[1].response.onResponseReceivedActions[0].appendContinuationItemsAction
+    .continuationItems.find((item) => item.playlistVideoRenderer &&
+      item.playlistVideoRenderer.videoId === 'vid00000004').playlistVideoRenderer;
+  assert.notStrictEqual(planted.shortBylineText.runs[0].text, 'Channel 5');
 });
 
 test('assertClean refuses output that still holds a real value, without printing it', () => {

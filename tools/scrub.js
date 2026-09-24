@@ -10,6 +10,8 @@ const TOKEN_KEYS = { visitorData: 'visitor', datasyncId: 'datasync', token: 'con
 const TEXT_KEYS = { shortBylineText: 'channel', longBylineText: 'channel', ownerText: 'person' };
 const TRACKING_KEYS = new Set(['trackingParams', 'clickTrackingParams', 'serviceTrackingParams', 'serializedShareEntity']);
 const OPAQUE_KEYS = new Set(['params', 'playerParams']);
+const CARBON_HOST = /https?:\/\/[^/]*googlevideo\.com\/[^\s"']*/;
+const CARBON_PLACEHOLDER = 'https://googlevideo.com/placeholder';
 const IMAGE_HOST = /^(https?:)?\/\/[^/]*(ytimg\.com|ggpht\.com|googleusercontent\.com)\//;
 const IMAGE_PLACEHOLDER = 'https://i.ytimg.com/placeholder.jpg';
 const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
@@ -101,6 +103,8 @@ function buildMapping(found) {
   const counters = {};
   const byValue = new Map();
   const byKindAndBase = new Map();
+  const reals = new Set(found.map(({ value }) => value));
+  const longReals = [...reals].filter((value) => value.length >= SUBSTRING_MIN_LENGTH);
   for (const { kind, value } of found) {
     if (byValue.has(value)) continue;
     const base = kind === 'handle' ? value.replace(/^@/, '') : value;
@@ -109,8 +113,14 @@ function buildMapping(found) {
       byValue.set(value, { kind, placeholder: shared });
       continue;
     }
-    counters[kind] = (counters[kind] || 0) + 1;
-    const placeholder = PLACEHOLDERS[kind](counters[kind]);
+    let placeholder;
+    for (;;) {
+      counters[kind] = (counters[kind] || 0) + 1;
+      placeholder = PLACEHOLDERS[kind](counters[kind]);
+      const collides = reals.has(placeholder)
+        || longReals.some((real) => placeholder.includes(real));
+      if (!collides) break;
+    }
     byKindAndBase.set(`${kind}:${base}`, placeholder);
     byValue.set(value, { kind, placeholder });
   }
@@ -137,6 +147,7 @@ function makeReplacer(mapping) {
   return function replace(value, key, inTracking) {
     if (inTracking) return 'TRACKING';
     if (OPAQUE_KEYS.has(key) && long.some((real) => decodeOpaque(value).includes(real))) return 'PARAMS';
+    if (CARBON_HOST.test(value)) return CARBON_PLACEHOLDER;
     if (IMAGE_HOST.test(value)) return IMAGE_PLACEHOLDER;
     const exact = mapping.get(value.trim());
     if (exact) return exact.placeholder;
