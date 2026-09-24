@@ -44,9 +44,6 @@ function makeChrome({ tabs = [], createState = 'ready' } = {}) {
                 runtimeListeners.forEach((fn) => fn({ wlResponse: true, id: msg.id, ok: true, result: {} }));
               });
             }
-            // contentState 'listening': bridge.js is attached but page.js has not
-            // taken the nonce yet, so the request is accepted and silently dropped,
-            // exactly like the real extension. No response ever arrives.
             return undefined;
           }
           messages.push({ tabId, msg });
@@ -191,6 +188,18 @@ test('ensureTab rejects with TimeoutError if the bridge is attached but the nonc
   });
   const bridge = createTabBridge(chrome, { timeoutMs: 20, readyPollMs: 5 });
   await assert.rejects(() => bridge.ensureTab(), TimeoutError);
+  assert.strictEqual(bridge.connectedTabId, null);
+});
+
+test('ensureTab rejects with TabGoneError if the tab closes while still waiting to become ready, not resolved as ready', async () => {
+  const { chrome, removedListeners } = makeChrome({
+    tabs: [{ id: 5, url: 'https://www.youtube.com/playlist?list=WL', contentState: 'listening' }],
+  });
+  const bridge = createTabBridge(chrome, { readyPollMs: 1 });
+  const ensured = bridge.ensureTab();
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  removedListeners.forEach((fn) => fn(5, { windowId: 1, isWindowClosing: false }));
+  await assert.rejects(() => ensured, TabGoneError);
   assert.strictEqual(bridge.connectedTabId, null);
 });
 

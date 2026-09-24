@@ -67,7 +67,7 @@
 
     async function probeOnce(tabId, attemptTimeoutMs) {
       const id = (lastId += 1);
-      return new Promise((resolveOuter) => {
+      return new Promise((resolveOuter, rejectOuter) => {
         let settled = false;
         const timer = setTimeout(() => {
           if (settled) return;
@@ -82,11 +82,15 @@
             clearTimeout(timer);
             resolveOuter(true);
           },
-          reject: () => {
+          reject: (err) => {
             if (settled) return;
             settled = true;
             clearTimeout(timer);
-            resolveOuter(true);
+            if (err instanceof TabGoneError) {
+              rejectOuter(err);
+            } else {
+              resolveOuter(true);
+            }
           },
           timer,
         });
