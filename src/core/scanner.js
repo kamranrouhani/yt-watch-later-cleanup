@@ -8,8 +8,16 @@
   const WL_OLDEST_SORT_ORDER = 2;
   const SORT_VERIFY_MAX_ATTEMPTS = 6;
   const SORT_VERIFY_POLL_MS = 350;
+  const SCAN_PAGE_THROTTLE_MS = 50;
 
   class SortNotVerifiedError extends Error {
+    constructor(message) {
+      super(message);
+      this.name = this.constructor.name;
+    }
+  }
+
+  class SortDriftError extends SortNotVerifiedError {
     constructor(message) {
       super(message);
       this.name = this.constructor.name;
@@ -102,6 +110,9 @@
     const pollMs = Number.isInteger(options.sortVerifyPollMs)
       ? options.sortVerifyPollMs
       : SORT_VERIFY_POLL_MS;
+    const pageThrottleMs = Number.isInteger(options.scanPageThrottleMs)
+      ? options.scanPageThrottleMs
+      : SCAN_PAGE_THROTTLE_MS;
 
     const sortState = await verifyOldestFirst(innertube, { maxAttempts, pollMs });
 
@@ -119,27 +130,62 @@
     let pageCount = 0;
 
     const firstJson = await innertube.browseWatchLater();
+    // Upstream `fetchAllWatchLaterEntries` (reference/upstream/yt-watch-later-tools.user.js
+    // lines 566-574) refuses to trust positions from a page whose own sort state has
+    // drifted from what verification just confirmed, even though verification itself
+    // passed. A confirmed edit does not guarantee the page this scan actually reads
+    // reflects it.
+    const firstPageSortState = extractSortState(firstJson);
+    if (firstPageSortState?.selectedOrder !== WL_OLDEST_SORT_ORDER) {
+      const observedOrder = Number.isFinite(firstPageSortState?.selectedOrder)
+        ? firstPageSortState.selectedOrder
+        : 'unknown';
+      const observedTitle = firstPageSortState?.selectedTitle || 'unknown';
+      throw new SortDriftError(
+        `Sort drift detected while scanning: expected order=${WL_OLDEST_SORT_ORDER} but got order=${observedOrder} (${observedTitle}).`
+      );
+    }
+
     const firstPage = playlistParser.parsePage(firstJson);
     addEntries(firstPage.entries);
     pageCount += 1;
     if (onProgress) onProgress({ page: pageCount, pageEntries: firstPage.entries.length, totalEntries: entries.length });
 
+    // Upstream (lines 588-624) tracks `seenTokens` and skips a continuation token it
+    // has already consumed, so a misbehaving response that repeats its own token can
+    // never turn into an unbounded request loop against YouTube.
+    const seenTokens = new Set();
     let nextToken = firstPage.continuationToken;
     while (nextToken) {
       if (signal && signal.aborted) {
         status = 'aborted';
         break;
       }
+      if (seenTokens.has(nextToken)) {
+        break;
+      }
+      seenTokens.add(nextToken);
+
       const json = await innertube.browseContinuation(nextToken);
       const page = playlistParser.parsePage(json);
       addEntries(page.entries);
       pageCount += 1;
       if (onProgress) onProgress({ page: pageCount, pageEntries: page.entries.length, totalEntries: entries.length });
       nextToken = page.continuationToken;
+
+      // Upstream (lines 621-623) sleeps between continuation fetches when another
+      // page remains, to throttle the request rate.
+      if (nextToken && !seenTokens.has(nextToken) && pageThrottleMs > 0) {
+        await sleep(pageThrottleMs);
+      }
     }
 
     const indexedEntries = entries.map((entry, idx) => ({ ...entry, position: idx + 1 }));
-    const fingerprint = await computeFingerprint(indexedEntries.map((e) => e.setVideoId));
+    // An aborted scan is a partial list, not a whole playlist: leaving its fingerprint
+    // null means #14's stale-preview check can never mistake it for a complete scan.
+    const fingerprint = status === 'complete'
+      ? await computeFingerprint(indexedEntries.map((e) => e.setVideoId))
+      : null;
 
     return {
       entries: indexedEntries,
@@ -152,7 +198,14 @@
     };
   }
 
-  const api = { scan, SortNotVerifiedError, extractSortState, computeFingerprint };
+  const api = {
+    scan,
+    SortNotVerifiedError,
+    SortDriftError,
+    extractSortState,
+    computeFingerprint,
+    SCAN_PAGE_THROTTLE_MS,
+  };
 
   root.WLCore = Object.assign(root.WLCore || {}, { scanner: api });
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
