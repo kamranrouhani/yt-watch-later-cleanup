@@ -175,10 +175,19 @@ test('the pause happens between batches and not after the last', async () => {
 test('a default sleep is used when none is injected', async () => {
   const innertube = fakeInnertube();
   const plan = createPlan(previewOf(2), { entries: 2 });
-  const start = Date.now();
-  const result = await run(plan, { innertube, batchSize: 1, pauseMs: 5 });
-  assert.ok(Date.now() - start >= 5);
-  assert.strictEqual(result.status, 'complete');
+  const realSetTimeout = globalThis.setTimeout;
+  const scheduled = [];
+  globalThis.setTimeout = (fn, ms, ...rest) => {
+    scheduled.push(ms);
+    return realSetTimeout(fn, 0, ...rest);
+  };
+  try {
+    const result = await run(plan, { innertube, batchSize: 1, pauseMs: 5 });
+    assert.deepStrictEqual(scheduled, [5]);
+    assert.strictEqual(result.status, 'complete');
+  } finally {
+    globalThis.setTimeout = realSetTimeout;
+  }
 });
 
 test('createPlan rejects previews without remove lists or usable entries', () => {
