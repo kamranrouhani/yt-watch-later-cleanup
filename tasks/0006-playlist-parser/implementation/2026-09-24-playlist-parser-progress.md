@@ -92,3 +92,50 @@ null reds tests 6, 7, 8. Each restored after the run. Final:
 `# pass 24`, `# fail 0`; `npm run check` prints `all files parse`;
 `npm test` prints `# pass 175`, `# fail 0`.
 Next: step 5, self review, PR.
+
+## 2026-09-24 07:45  Step 5: Progress log, self review, PR
+
+Worked: the pre-merge review landed in its own tasks-only commit and the
+three real captured pages plus the synthetic fixture parse clean, 300
+entries total. Pushed the branch and opened PR #37 with the plan's own
+title, `Closes #6`, and each acceptance box pinned to the command that
+proves it. Handed the card to metis-review for round 1 with pr_url,
+head_sha, changed_files, tests_run and round. PR:
+
+    https://github.com/kamranrouhani/yt-watch-later-cleanup/pull/37
+    head at review time: 2ee905611d6c81366a3c0bc85df05222c4a82c9f
+    state: OPEN
+    reviews: [] (round 1 pending at the time of this entry)
+
+Direct run against the captured fixtures, verified again just now while
+writing this entry:
+
+    page-1: entries 100 token CONTINUATION_1 dropped 0
+    page-2: entries 100 token CONTINUATION_2 dropped 0
+    page-3: entries 100 token CONTINUATION_3 dropped 0
+
+Did not work: commit 2ee9056, taken to be the step 5 commit, ended up
+carrying the step 2 to 4 log entries instead and mislabeled itself
+"steps 2 to 5". Caught in round 1 review as finding 1 (there is no step
+5 entry at all in this log before this one). Fix lands in this rework
+round: the branch's tasks-only tail was rebased so the message reads
+"steps 2 to 4" (matching its real content, the rewritten commit is
+4f21b5f), and this step 5 entry is appended here as a NEW commit, per
+the operator note after the review that no further rewrite of the
+already-reviewed PR head is allowed from this point on. The round 1
+review and the operator's own audit of PR #37 both reference 2ee9056 by
+hash as reviewed; that stays true as the record of what was seen, and
+the current branch tip it evaluates is 2a1b5a3 (content-identical to
+2ee9056, only the message and position of the round-1-review commit
+changed), which the round 2 review header will name.
+
+Verification: after the rebase, `npm run check` prints `all files parse`,
+`npm test` prints `# tests 175`, `# pass 175`, `# fail 0`,
+`npm run test:browser` prints 8 `ok` lines including
+`ok extension cbpfjjiplgkjghgnglklcnojcgpifgae loaded, dashboard
+rendered, no errors`. `git log --format='%s' f14e9d4..HEAD` prints only
+"add the round 1 review for the playlist parser" and "log steps 2 to 4
+in the playlist parser progress".
+
+Next: round 2 rework, the findings from the round 1 review and the
+operator audit.
