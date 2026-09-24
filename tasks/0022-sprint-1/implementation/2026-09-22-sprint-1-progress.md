@@ -364,3 +364,18 @@ still run the whole file, so the review file carries the corrected
 --test-name-pattern commands.
 Merged: PR #39, regular merge, CI green, after three review rounds.
 Next: #12.
+
+## 2026-09-24 21:58  switch to three cards per issue
+
+Decided: from #12 on, each issue runs as three chained cards, build, gate
+and finish, written up in plans/2026-09-24-tiered-cards-amendment.md and
+docs/ORCHESTRATION.md. Rounds 1 and 2 run on a cheaper tier and round 3 is
+a fixed gate by the stronger reviewer, followed by one fix and a checked
+merge. Issues labelled safety keep the single-card flow on the stronger
+tier. Every card now reports its terminal events to Kamran directly, so no
+session watches the board.
+Reason: the five merges since the card switch took two or three rounds
+each, all on paid models, and the watching session alone resent
+about 26M tokens of context before it ran out of quota at 09:36. #7 then
+merged unattended, which showed the board does not need a watcher.
+Next: #12 on the new flow as the pilot.

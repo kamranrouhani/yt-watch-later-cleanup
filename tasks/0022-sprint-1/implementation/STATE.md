@@ -8,7 +8,7 @@ BLOCKED ON: nothing. #17 still needs Kamran live. The stray branch
 feature/0004-sapisidhash-signing waits for his one-click deletion.
 Kamran's signed-in rerun of the ensureTab fix is in
 tasks/0033-ensuretab-ready/implementation/manual-check.md.
-MODE: one kanban card per issue on board yt-cleanup, see
-plans/2026-09-24-card-execution-amendment.md. Each card's review run
-overwrites this file on its PR branch before merging.
+MODE: three kanban cards per issue (build, gate, finish) on board
+yt-cleanup, see plans/2026-09-24-tiered-cards-amendment.md. Each finish
+card overwrites this file on its PR branch before merging.
 UPDATED: 2026-09-24
