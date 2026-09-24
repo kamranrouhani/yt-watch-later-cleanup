@@ -118,3 +118,39 @@ Note for #2: `tools/capture.js` calls `fetch` on purpose. It is not shipped
 and not in the manifest, so the no-network scan must exclude `tools/` along
 with `reference/` and `test/`.
 Next: #4 from main while waiting. Resume here at step 9 when the file lands.
+
+## 2026-09-24 04:30  Steps 9 and 10: rub the real capture into fixtures, findings
+
+Kamran ran the snippet twice (wl-capture-20260924-050853 and -051020). The
+summaries match exactly; the only byte differences are per-request tracking
+ids, so the fresher file (-051020) is the raw input, kept in raw/ out of git.
+The capture answers research questions 1, 2 and 3 outright: no added-at
+timestamp anywhere in 300 items, the 100% overlay is a normal
+resume-playback renderer (73 items at exactly 100, 187 watched in total,
+113 never started), and all 300 items are playlistVideoRenderer with 0
+lockupViewModel. No unplayable and no Shorts items: YouTube does not serve
+deleted/private items in Watch Later at all, so those shapes stay synthetic.
+Found a scrubber bug on the real data: one channel is literally named
+"Channel 8", which collided with the "Channel <n>" placeholder pool and the
+mapping produced a placeholder equal to a real value; a second collision
+surfaced later when a placeholder "Channel 80" contained the real "Channel 8"
+as a substring. buildMapping now skips any placeholder that is or contains a
+real value, and googlevideo initplayback urls (they carry the client ip) are
+replaced whole. Both fixes test-first: the synthetic fixture grows a literal
+"Channel 5" channel and a planted googlevideo url, each new test seen failing
+before the fix (not ok 9 scrub, not ok 8 googlevideo), then green after.
+Verification of the fixture itself, by eye and script: no @, no SAPISID, no
+visitorData key, no datasync real value, no ip=/initplayback strings, all
+thumbnail and playback urls placeholders, percentages and structure intact
+(shape unchanged, 187 overlays preserved, continuation chain intact).
+Committed: fixtures 2026-09-24 (3 pages, capture.json, README, 1569-hash
+denylist), scrubber fix, synthetic fixture additions. 140/140 unit tests,
+7/7 browser assertions incl. the capture spec, fixture guard 7/7.
+Rewrote history once: rebased the branch onto main (Kamran's preference over
+a merge) before pushing; conflicts in package.json (kept all three browser
+specs) and stale STATE/BLOCKED copies (took main's). Force-pushed the draft
+PR branch with a plain push (=ref), main untouched.
+findings.md written with JSON paths for all five questions; docs/RESEARCH.md
+open-questions section replaced by the capture's answers. Sort params for
+oldest is now primary evidence: "QAE%3D", not upstream's CAFAAQ%3D%3D.
+Next: step 11, review, PR out of draft, merge as a regular merge.
