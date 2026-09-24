@@ -5,8 +5,9 @@ files this points to.
 
 ## Start a session
 
-Paste the contents of `tasks/0022-sprint-1/KICKOFF.md` as the first message.
-It points the new session at everything below.
+Paste the contents of `tasks/0022-sprint-1/KICKOFF-2.md` as the first
+message. It points the new session at everything below and at what has
+already merged. `KICKOFF.md` is the session 1 prompt, kept for the record.
 
 ## Where things are
 
@@ -18,10 +19,12 @@ reference/upstream/                      the userscript every YouTube call is po
 tasks/0022-sprint-1/                     sprint brief, loop, cursor, blocked list, log
   GOAL.md                                rules and git permissions for the sprint
   LOOP.md                                the per-issue workflow
-  KICKOFF.md                             the paste-once prompt
+  KICKOFF.md                             the session 1 prompt, kept for the record
+  KICKOFF-2.md                           the paste-once prompt from here on
   scripts/status.sh                      read-only orientation, run first each cycle
   implementation/STATE.md                which issue is current
   implementation/BLOCKED.md              what is waiting on Kamran
+  implementation/open-items-for-kamran.md  Kamran's checklist, what he must do
 tasks/000N-<slug>/                       one folder per issue, same number as the issue
 ```
 
@@ -33,8 +36,9 @@ tasks/000N-<slug>/                       one folder per issue, same number as th
 | Local | `/root/projects/yt-watch-later-playlist-cleanup` |
 | Sprint 1 | issues #1 to #17, tracking issue #22 |
 | Sprint 2 | issues #18 to #21 |
-| Next | #1, plan ready and its code proven on this host |
-| Waiting on Kamran | nothing yet. #3 will need one capture run in his browser |
+| Merged | #1, #2, #4, #5, #8, #9, #10, #11 (PRs 23, 26 to 32) |
+| Next | #3 resumes at step 9 of its plan when the capture file lands. #24 is workable while waiting |
+| Waiting on Kamran | the capture run, two manual checklists, one branch deletion. All in `tasks/0022-sprint-1/implementation/open-items-for-kamran.md` |
 
 ## Environment on this host
 
