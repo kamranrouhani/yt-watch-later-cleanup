@@ -5,9 +5,9 @@ files this points to.
 
 ## Start a session
 
-Issues now run as one kanban card each on board `yt-cleanup`: see
-`docs/ORCHESTRATION.md` and
-`tasks/0022-sprint-1/plans/2026-09-24-card-execution-amendment.md`. Check the
+Issues now run as three chained kanban cards each (build, gate, finish) on
+board `yt-cleanup`: see `docs/ORCHESTRATION.md` and
+`tasks/0022-sprint-1/plans/2026-09-24-tiered-cards-amendment.md`. Check the
 board before touching anything:
 
     hermes kanban --board yt-cleanup list
@@ -27,6 +27,7 @@ tasks/0022-sprint-1/                     sprint brief, loop, cursor, blocked lis
   GOAL.md                                rules and git permissions for the sprint
   LOOP.md                                the per-issue workflow, steps 4 to 7 run inside each card
   plans/2026-09-24-card-execution-amendment.md  how cards replace the single loop
+  plans/2026-09-24-tiered-cards-amendment.md    build, gate and finish cards per issue
   KICKOFF.md, KICKOFF-2.md               the single-session prompts, kept for the record
   scripts/status.sh                      read-only orientation, run first each cycle
   implementation/STATE.md                which issue is current
@@ -43,8 +44,8 @@ tasks/000N-<slug>/                       one folder per issue, same number as th
 | Local | `/root/projects/yt-watch-later-playlist-cleanup` |
 | Sprint 1 | issues #1 to #17, tracking issue #22 |
 | Sprint 2 | issues #18 to #21 |
-| Merged | #1, #2, #3, #4, #5, #8, #9, #10, #11 (PRs 23 to 32, then #25 for #3) |
-| Next | #33 (the `ensureTab` bug from Kamran's #11 checklist step 5), #24, then #6, the playlist parser, against the real fixtures merged in PR #25. One card each, chained |
+| Merged | #1 to #11, #24, #33, #35 (PRs 23 to 39) |
+| Next | #12, the dashboard table, the first issue on the three-card flow. Then #13 to #16 in wave order |
 | Waiting on Kamran | one branch deletion on GitHub (`feature/0004-sapisidhash-signing`). Everything capture-related is done and merged |
 
 ## Environment on this host

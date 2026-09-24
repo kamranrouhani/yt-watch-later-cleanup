@@ -4,40 +4,52 @@ How an issue travels from GitHub to a merge commit on `main`. Issues are
 worked one at a time, each in its own git worktree, and every change goes
 through a review and green CI before it merges.
 
-## One issue, one card
+## One issue, three cards
 
-Each workable issue gets one card on the kanban board `yt-cleanup`. A card
-carries the whole life of that issue:
+Each workable issue gets three chained cards on the kanban board
+`yt-cleanup`. They share the issue's branch and the first card's worktree,
+and each starts only when the one before it is done.
 
-1. **Implementation.** The card's worktree lives at `.worktrees/<card-id>` on
-   the branch `feature/NNNN-<slug>` or `fix/NNNN-<slug>`, NNNN being the issue
-   number. The work follows steps 4 to 7 of
+1. **Build.** The worktree lives at `.worktrees/<card-id>` on the branch
+   `feature/NNNN-<slug>` or `fix/NNNN-<slug>`, NNNN being the issue number.
+   The work follows steps 4 to 7 of
    [`tasks/0022-sprint-1/LOOP.md`](../tasks/0022-sprint-1/LOOP.md): task
    folder, plan committed alone, failing test first, green suite, progress
-   entry per step. It ends with a pushed branch, a PR that says `Closes #N`,
-   and a hand-off to review.
-2. **Review.** A separate run reads the PR cold, runs the suite, and writes
-   `tasks/NNNN-<slug>/reviews/YYYY-MM-DD-HHMM-review-r<round>.md` with its
-   header taken from git. It either requests changes, which sends the card
-   back to implementation on the same branch, or approves. Three rounds at
-   most: after the third, the reviewer approves and lists what is left as
-   residual risk, or escalates.
-3. **Merge.** On approval the reviewer appends the issue's entry to the
-   sprint log and moves `STATE.md` on, in a tasks-only commit on the PR
-   branch, waits for the required `test` check on that head, and merges with
-   a regular merge commit. The PR closes the issue.
+   entry per step. It ends with a pushed branch and a PR that says
+   `Closes #N`. A separate run then reviews it cold, runs the suite, and
+   writes `tasks/NNNN-<slug>/reviews/YYYY-MM-DD-HHMM-review-r<round>.md`
+   with its header taken from git. Round 1 may send the card back to
+   implementation on the same branch; round 2 always hands on. The build
+   card never merges.
+2. **Gate.** Round 3 is a fixed review by a stronger reviewer than rounds 1
+   and 2. It reads the PR cold, uses the earlier reviews as input, and
+   writes `reviews/YYYY-MM-DD-HHMM-review-r3-gate.md` with numbered findings
+   or none. It changes no code.
+3. **Finish.** The gate's findings are fixed once, on the same branch. A
+   review run checks each finding against the new commits and reruns the
+   suites. A finding still open goes back for one more fix, then the card
+   blocks for Kamran. When all are closed the finish card appends the
+   issue's entry to the sprint log and moves `STATE.md` on, in a tasks-only
+   commit on the PR branch, waits for the required `test` check on that
+   head, and merges with a regular merge commit. The PR closes the issue.
 4. **Close-out.** Tick the issue in the tracking issue (#22 for sprint 1) and
    take `blocked` off any issue whose last dependency just closed.
 
-Cards are chained, so the next card starts only when the previous one is
-done. Code reaches `main` only through a merged PR.
+Issues labelled `safety` run as a single card instead, with all three
+review rounds done by the stronger reviewer.
+
+The issue's cards are chained to the previous issue's finish card, so one
+issue is worked at a time. Code reaches `main` only through a merged PR.
+Every card reports blocks, crashes, review verdicts and completion to
+Kamran as they happen.
 
 ## Merge policy
 
 Every card states `merge: auto` or `merge: approve`.
 
-- `merge: auto`: the reviewer merges once approved and green.
-- `merge: approve`: the reviewer stops at approval and waits for Kamran to
+- `merge: auto`: the finish card merges once every gate finding is closed
+  and the required check is green.
+- `merge: approve`: the finish card stops there and waits for Kamran to
   merge the PR or to say go.
 
 Sprint 1 cards are `merge: auto`, the grant in
