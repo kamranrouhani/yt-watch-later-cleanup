@@ -5,11 +5,12 @@ const assert = require('node:assert');
 
 const { createTabBridge, TabGoneError, TimeoutError } = require('../src/core/tabBridge.js');
 
-function makeChrome({ tabs = [] } = {}) {
-  const state = { tabs: tabs.map((t) => ({ active: true, ...t })) };
+function makeChrome({ tabs = [], createState = 'ready' } = {}) {
+  const state = {
+    tabs: tabs.map((t) => ({ active: true, contentState: 'ready', ...t })),
+  };
   const removedListeners = [];
   const messages = [];
-  const pending = [];
   const runtimeListeners = [];
   let nextId = 100;
   return {
@@ -19,17 +20,37 @@ function makeChrome({ tabs = [] } = {}) {
         onMessage: { addListener: (fn) => runtimeListeners.push(fn) },
       },
       tabs: {
-        query: async (q) => state.tabs.filter((t) => !q.url || t.url === q.url),
+        query: async (q) => state.tabs.filter((t) => {
+          if (!q.url) return true;
+          if (q.url.endsWith('*')) return t.url.startsWith(q.url.slice(0, -1));
+          return t.url === q.url;
+        }),
         create: async ({ url, active }) => {
-          const tab = { id: nextId++, url, active: active !== false, windowId: 1 };
+          const tab = { id: nextId++, url, active: active !== false, windowId: 1, contentState: createState };
           state.tabs.push(tab);
           return tab;
         },
         get: async (id) => state.tabs.find((t) => t.id === id) || Promise.reject(new Error('no tab')),
         onRemoved: { addListener: (fn) => removedListeners.push(fn) },
         sendMessage: async (tabId, msg) => {
+          const tab = state.tabs.find((t) => t.id === tabId);
+          if (!tab || tab.contentState === 'none') {
+            throw new Error('Could not establish connection. Receiving end does not exist.');
+          }
+          if (!msg || msg.wlRequest !== true) return undefined;
+          if (msg.kind === '__wlReadyProbe') {
+            if (tab.contentState === 'ready') {
+              queueMicrotask(() => {
+                runtimeListeners.forEach((fn) => fn({ wlResponse: true, id: msg.id, ok: true, result: {} }));
+              });
+            }
+            // contentState 'listening': bridge.js is attached but page.js has not
+            // taken the nonce yet, so the request is accepted and silently dropped,
+            // exactly like the real extension. No response ever arrives.
+            return undefined;
+          }
           messages.push({ tabId, msg });
-          pending.push({ id: msg.id });
+          return undefined;
         },
       },
     },
@@ -104,4 +125,94 @@ test('a request before ensureTab throws a setup error', async () => {
   const { chrome } = makeChrome();
   const bridge = createTabBridge(chrome);
   await assert.rejects(() => bridge.request('ping', null), /no tab/i);
+});
+
+test('ensureTab waits for a freshly created tab to have no content script yet, then resolves once it answers', async () => {
+  const { chrome, state, messages, respond } = makeChrome({ createState: 'none' });
+  const bridge = createTabBridge(chrome, { readyPollMs: 1 });
+  let resolved = false;
+  const ensured = bridge.ensureTab().then((tab) => { resolved = true; return tab; });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.strictEqual(resolved, false, 'ensureTab must not resolve while the tab has no content script');
+  assert.strictEqual(state.tabs[0].contentState, 'none');
+  state.tabs[0].contentState = 'ready';
+  await ensured;
+  assert.strictEqual(resolved, true);
+  const req = bridge.request('ping', null);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.strictEqual(messages.length, 1);
+  respond(messages[0].msg.id, { wlResponse: true, id: messages[0].msg.id, ok: true, result: { clientVersion: '2.x' } });
+  assert.deepStrictEqual(await req, { clientVersion: '2.x' });
+});
+
+test('ensureTab keeps waiting when the bridge is attached but the page has not taken the nonce yet', async () => {
+  const { chrome, state } = makeChrome({
+    tabs: [{ id: 5, url: 'https://www.youtube.com/playlist?list=WL', contentState: 'listening' }],
+  });
+  const bridge = createTabBridge(chrome, { readyPollMs: 1 });
+  let resolved = false;
+  const ensured = bridge.ensureTab().then(() => { resolved = true; });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.strictEqual(resolved, false, 'sendMessage not throwing must not be mistaken for readiness');
+  state.tabs[0].contentState = 'ready';
+  await ensured;
+  assert.strictEqual(resolved, true);
+});
+
+test('ensureTab waits for a reused tab that has no content script yet', async () => {
+  const { chrome, state, messages, respond } = makeChrome({
+    tabs: [{ id: 5, url: 'https://www.youtube.com/playlist?list=WL', contentState: 'none' }],
+  });
+  const bridge = createTabBridge(chrome, { readyPollMs: 1 });
+  let resolved = false;
+  const ensured = bridge.ensureTab().then(() => { resolved = true; });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.strictEqual(resolved, false);
+  state.tabs[0].contentState = 'ready';
+  await ensured;
+  assert.strictEqual(resolved, true);
+  const req = bridge.request('ping', null);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.strictEqual(messages.length, 1);
+  respond(messages[0].msg.id, { wlResponse: true, id: messages[0].msg.id, ok: true, result: { clientVersion: '2.x' } });
+  assert.deepStrictEqual(await req, { clientVersion: '2.x' });
+});
+
+test('ensureTab rejects with TimeoutError if the tab never answers', async () => {
+  const { chrome } = makeChrome({ createState: 'none' });
+  const bridge = createTabBridge(chrome, { timeoutMs: 20, readyPollMs: 5 });
+  await assert.rejects(() => bridge.ensureTab(), TimeoutError);
+  assert.strictEqual(bridge.connectedTabId, null);
+});
+
+test('ensureTab rejects with TimeoutError if the bridge is attached but the nonce never arrives', async () => {
+  const { chrome } = makeChrome({
+    tabs: [{ id: 5, url: 'https://www.youtube.com/playlist?list=WL', contentState: 'listening' }],
+  });
+  const bridge = createTabBridge(chrome, { timeoutMs: 20, readyPollMs: 5 });
+  await assert.rejects(() => bridge.ensureTab(), TimeoutError);
+  assert.strictEqual(bridge.connectedTabId, null);
+});
+
+test('an existing Watch Later tab with extra query parameters is reused, no second tab opened', async () => {
+  const { chrome, state } = makeChrome({
+    tabs: [{ id: 5, url: 'https://www.youtube.com/playlist?list=WL&index=3&pp=abc' }],
+  });
+  const bridge = createTabBridge(chrome);
+  const tab = await bridge.ensureTab();
+  assert.strictEqual(tab.id, 5);
+  assert.strictEqual(state.tabs.length, 1);
+});
+
+test('a tab that is not Watch Later is never picked', async () => {
+  const { chrome, state } = makeChrome({
+    tabs: [
+      { id: 5, url: 'https://www.youtube.com/playlist?list=PLsomethingelse' },
+      { id: 6, url: 'https://www.youtube.com/' },
+    ],
+  });
+  const bridge = createTabBridge(chrome);
+  const tab = await bridge.ensureTab();
+  assert.strictEqual(state.tabs.length, 3);
+  assert.strictEqual(tab.url, 'https://www.youtube.com/playlist?list=WL');
 });
