@@ -8,8 +8,49 @@
 <body>
   <main id="app">
     <h1>Watch Later Cleanup</h1>
-    <p id="status">Not connected to YouTube yet.</p>
+    <p id="status" hidden></p>
+
+    <section id="controls">
+      <button id="scan-btn" type="button">Scan playlist</button>
+      <button id="cancel-btn" type="button" hidden>Cancel</button>
+    </section>
+
+    <section id="progress" hidden>
+      <div id="progress-bar"><div id="progress-fill"></div></div>
+      <p id="progress-text"></p>
+    </section>
+
+    <section id="saved-scan" hidden>
+      <p id="saved-info"></p>
+      <button id="rescan-btn" type="button">Rescan</button>
+    </section>
+
+    <section id="error-banner" hidden>
+      <p id="error-text"></p>
+    </section>
+
+    <section id="table-section" hidden>
+      <div id="filter-row">
+        <input id="filter-input" type="search" placeholder="Filter by title or channel">
+        <span id="row-count"></span>
+      </div>
+      <table id="entry-table">
+        <thead>
+          <tr>
+            <th data-sort="position" class="sortable">Pos</th>
+            <th data-sort="title" class="sortable">Title</th>
+            <th data-sort="channelName" class="sortable">Channel</th>
+            <th data-sort="durationSeconds" class="sortable">Duration</th>
+            <th data-sort="watchedPercent" class="sortable">Watched</th>
+            <th data-sort="publishedText" class="sortable">Published</th>
+            <th data-sort="playable" class="sortable">Status</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </section>
   </main>
+
   <script src="../src/core/constants.js"></script>
   <script src="../src/core/tabBridge.js"></script>
   <script src="dashboard.js"></script>
