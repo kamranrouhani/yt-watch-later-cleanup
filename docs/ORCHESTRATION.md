@@ -1,64 +1,78 @@
-# Orchestration: kanban epic pipeline (2026-09-24)
+# Orchestration
 
-This repo now runs its tickets through a kanban epic pipeline. Written by the
-metis session that set it up; update this file when the pipeline changes.
+How an issue travels from GitHub to a merge commit on `main`. Issues are
+worked one at a time, each in its own git worktree, and every change goes
+through a review and green CI before it merges.
 
-## What happens to a GitHub issue
+## One issue, one card
 
-For engineering issues (not human-blocked spike steps):
+Each workable issue gets one card on the kanban board `yt-cleanup`. A card
+carries the whole life of that issue:
 
-1. metis (orchestrator session) creates a kanban card on board `yt-cleanup`,
-   one per issue, body self-contained: issue number, acceptance criteria,
-   branch `feature/NNNN-<slug>`, required CI check, review round cap.
-2. Board assigns it to `metis-dev`. A fresh session runs the card in its own
-   git worktree: task folder, failing test first, implement, green suite,
-   commit, push, DRAFT PR, progress-log entry. Then same-card review.
-3. `metis-review` (fresh session) reviews the PR: writes a review in
-   `tasks/0022-sprint-1/reviews/`, approves (`kanban_complete`) or
-   `kanban_request_changes` (spawns a NEW implementer session). Max
-   3 review rounds; then approve-with-residual-risk or block.
-4. Merge card (linked child), regular merge commit only, never squash,
-   never force, only when required CI check `test` is green on main.
-   - merge policy per epic: `merge: approve` (default; Kamran unblocks or
-     merges) or `merge: auto` stated in the epic plan.
-5. Next ticket's card is linked behind the merge card: strictly one
-   ticket runs at a time, each in a fresh session.
+1. **Implementation.** The card's worktree lives at `.worktrees/<card-id>` on
+   the branch `feature/NNNN-<slug>` or `fix/NNNN-<slug>`, NNNN being the issue
+   number. The work follows steps 4 to 7 of
+   [`tasks/0022-sprint-1/LOOP.md`](../tasks/0022-sprint-1/LOOP.md): task
+   folder, plan committed alone, failing test first, green suite, progress
+   entry per step. It ends with a pushed branch, a PR that says `Closes #N`,
+   and a hand-off to review.
+2. **Review.** A separate run reads the PR cold, runs the suite, and writes
+   `tasks/NNNN-<slug>/reviews/YYYY-MM-DD-HHMM-review-r<round>.md` with its
+   header taken from git. It either requests changes, which sends the card
+   back to implementation on the same branch, or approves. Three rounds at
+   most: after the third, the reviewer approves and lists what is left as
+   residual risk, or escalates.
+3. **Merge.** On approval the reviewer appends the issue's entry to the
+   sprint log and moves `STATE.md` on, in a tasks-only commit on the PR
+   branch, waits for the required `test` check on that head, and merges with
+   a regular merge commit. The PR closes the issue.
+4. **Close-out.** Tick the issue in the tracking issue (#22 for sprint 1) and
+   take `blocked` off any issue whose last dependency just closed.
 
-## Issue/card sync rules
+Cards are chained, so the next card starts only when the previous one is
+done. Code reaches `main` only through a merged PR.
 
-- Every engineering issue that gets a card gets label `kanban:card`.
-- Card body starts with `GitHub issue #NNN`. PR title carries the issue
-  scope. Merge comment references the issue, closing it.
-- A worker never edits issue state directly except closing it via the
-  merge, and commenting progress with the card id.
-- If a worker blocks with needs_input, it comments the block reason on
-  the issue too, so GitHub shows exactly what Kamran must do.
+## Merge policy
 
-## How CI was added
+Every card states `merge: auto` or `merge: approve`.
 
-Via `gh api ... /branches/main/protection` (the GitHub REST API), NOT via
-commits: branch protection is repository settings, not files in git, so
-there are no new commits for it. Context `test` (the name of the only job
-in .github/workflows/ci.yml) is required, strict up-to-date enforcement on.
+- `merge: auto`: the reviewer merges once approved and green.
+- `merge: approve`: the reviewer stops at approval and waits for Kamran to
+  merge the PR or to say go.
 
-## How to not step on an already-running session
+Sprint 1 cards are `merge: auto`, the grant in
+[`tasks/0022-sprint-1/GOAL.md`](../tasks/0022-sprint-1/GOAL.md). A new
+sprint or epic states its own policy in its plan. It never inherits one.
 
-- Kanban worktrees are per-card (`.worktrees/<card-id>`), so concurrent
-  sessions never share an index or branch.
-- One dispatcher (argos's gateway) claims cards atomically; a card can't
-  run twice.
-- Before writing to the shared repo from a manual session, check
-  `hermes kanban --board yt-cleanup list` for `running` cards and the
-  PR list; if a sprint is executing, do interactive work on OTHER
-  branches, not the sprint's.
-- Never rebase/force-push a branch while a card owns it.
+In every mode: no squash, no rebase merges, no force push, no direct commits
+to `main`.
 
-## Profiles and models
+## Issues and cards stay in sync
 
-- `metis` Opus 5.5 primary (glm-5.2 -> glm-5.3 -> glm-5.3-flash fallbacks):
-  plans epics, creates cards, wraps them up.
-- `metis-dev` Sonnet 5 primary (glm-5.3-flash -> glm-5.2 -> deepseek-v4-flash):
-  implementation cards.
-- `metis-review` Opus 5.5 primary (same glm fallbacks): review + merge.
-- LM quota exhaustion in a card: card requeues (rc75), no failure counted.
-- Card bodies carry explicit `merge: approve/auto`, even though boards have a default.
+- An issue that has a card carries the label `kanban:card`.
+- The card body starts with `GitHub issue #N` and holds the acceptance boxes.
+- The PR title names the change, the body says `Closes #N` and shows each
+  acceptance box with the command that demonstrates it.
+- When a card needs something only Kamran can provide, the request goes into
+  `tasks/0022-sprint-1/implementation/BLOCKED.md`, is commented on the issue,
+  and the card blocks until it arrives.
+- Problems found along the way become new issues in the milestone, not
+  silent scope growth on the current card.
+
+## Working beside a running card
+
+- Look first: `hermes kanban --board yt-cleanup list` for `running` or
+  `review` cards, and `gh pr list`.
+- Never check a card's branch out in the main checkout. Its worktree owns
+  it, and a second checkout makes the next run fail to start.
+- Never rebase or force push a branch a card owns.
+- Work that is not part of a card happens on its own branch, merged through
+  its own PR.
+
+## CI
+
+`.github/workflows/ci.yml` has one job, `test`: `npm ci`, `npm run check`,
+`npm test`. Branch protection on `main` requires it, up to date with `main`.
+It is a repository setting, not a file, so it does not show up in history.
+The browser specs (`npm run test:browser`) run locally and in each review,
+not in CI.

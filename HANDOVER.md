@@ -5,11 +5,16 @@ files this points to.
 
 ## Start a session
 
-Paste the contents of `tasks/0022-sprint-1/KICKOFF-2.md` as the first
-message. It points the new session at everything below and at what has
-already merged. `KICKOFF.md` is the session 1 prompt, kept for the record.
-The session 2 prompt already reflects the state after PR #25: issue #3
-merged, #6 next, #24 and the #11 ensureTab fix first if you want them.
+Issues now run as one kanban card each on board `yt-cleanup`: see
+`docs/ORCHESTRATION.md` and
+`tasks/0022-sprint-1/plans/2026-09-24-card-execution-amendment.md`. Check the
+board before touching anything:
+
+    hermes kanban --board yt-cleanup list
+
+A session that is not a card (orchestrating, or a question) starts from this
+file and those two. `KICKOFF.md` and `KICKOFF-2.md` are the prompts of the
+two single-session runs, kept for the record.
 
 ## Where things are
 
@@ -20,9 +25,9 @@ docs/ARCHITECTURE.md                     modules, data model, rule semantics, sa
 reference/upstream/                      the userscript every YouTube call is ported from
 tasks/0022-sprint-1/                     sprint brief, loop, cursor, blocked list, log
   GOAL.md                                rules and git permissions for the sprint
-  LOOP.md                                the per-issue workflow
-  KICKOFF.md                             the session 1 prompt, kept for the record
-  KICKOFF-2.md                           the paste-once prompt from here on
+  LOOP.md                                the per-issue workflow, steps 4 to 7 run inside each card
+  plans/2026-09-24-card-execution-amendment.md  how cards replace the single loop
+  KICKOFF.md, KICKOFF-2.md               the single-session prompts, kept for the record
   scripts/status.sh                      read-only orientation, run first each cycle
   implementation/STATE.md                which issue is current
   implementation/BLOCKED.md              what is waiting on Kamran
@@ -39,7 +44,7 @@ tasks/000N-<slug>/                       one folder per issue, same number as th
 | Sprint 1 | issues #1 to #17, tracking issue #22 |
 | Sprint 2 | issues #18 to #21 |
 | Merged | #1, #2, #3, #4, #5, #8, #9, #10, #11 (PRs 23 to 32, then #25 for #3) |
-| Next | #6, the playlist parser, written against the real fixtures merged in PR #25. Before it: the #11 `ensureTab` fix (Kamran's checklist step 5 found it) and #24 |
+| Next | #33 (the `ensureTab` bug from Kamran's #11 checklist step 5), #24, then #6, the playlist parser, against the real fixtures merged in PR #25. One card each, chained |
 | Waiting on Kamran | one branch deletion on GitHub (`feature/0004-sapisidhash-signing`). Everything capture-related is done and merged |
 
 ## Environment on this host

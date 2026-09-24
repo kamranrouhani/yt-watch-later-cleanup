@@ -14,13 +14,12 @@ Status: in development. Nothing here is usable yet. See
 
 ## How the work is organised
 
-Issues run one at a time through an autonomous pipeline: a kanban board
-picks each open issue up in a fresh agent session (implementation in a
-git worktree, then a code review, then a merge once CI is green). The
-rules, the issue/card sync conventions and the guardrails against two
-sessions colliding are in [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md).
-Branch protection on `main` requires the `test` check, so nothing merges
-with a red suite.
+Issues are worked one at a time from a kanban board, each on its own
+branch in its own git worktree: implementation, a written review, then a
+regular merge once CI is green. The flow, how cards and issues stay in
+sync, and how to work beside a card in progress are in
+[docs/ORCHESTRATION.md](docs/ORCHESTRATION.md). Branch protection on
+`main` requires the `test` check, so nothing merges with a red suite.
 
 ## Try it
 
