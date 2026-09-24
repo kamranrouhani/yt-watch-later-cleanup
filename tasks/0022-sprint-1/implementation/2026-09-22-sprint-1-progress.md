@@ -261,3 +261,23 @@ Filed: #33 for the ensureTab bug from Kamran's #11 checklist step 5, in the
 sprint 1 milestone and ticked in #22. Removed blocked from #6, since #3 is
 closed. Moved #24 into the sprint 1 milestone so the loop query finds it.
 Next: cards for #33, #24 and #6, chained in that order, merge: auto.
+
+## 2026-09-24 06:11  #33 ensureTab waits for the tab, merged in PR #34
+
+Worked: ensureTab now resolves only after an end-to-end probe gets an
+answer from page.js, so a new tab and a reused tab are both ready before
+the first request. Watch Later tabs are matched by parsed URL, so extra
+query parameters reuse the tab and other playlists or the home page are
+never picked. 148 unit tests and 8 browser assertions, including close,
+ensureTab again, ping. Kamran's signed-in rerun is steps 1 to 4 of
+tasks/0033-ensuretab-ready/implementation/manual-check.md.
+Did not work: the first probe, an empty message, only proved bridge.js was
+listening, not that page.js held the nonce, so it was replaced by a
+superseding plan. Round 1 review found a tab closed mid wait counted as
+ready; fixed in round 2 with a red-first test. In the browser spec, a tab
+opened by chrome.tabs.create bypasses context.route, so the spec navigates
+the new page itself.
+Found: test/remover.test.js:175 flakes on a 1 ms early timer, needs its
+own issue.
+Merged: PR #34, regular merge, CI green, after two review rounds.
+Next: #24, then #6.
