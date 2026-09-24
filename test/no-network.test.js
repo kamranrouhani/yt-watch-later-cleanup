@@ -84,6 +84,15 @@ test('dashboard html and css are scanned for origins', () => {
   assert.deepStrictEqual(findViolations(root), ['dashboard/dashboard.html: origin https://cdn.example.com']);
 });
 
+test('a stray fetch in a content script is caught', () => {
+  const root = ship(null, {
+    'manifest.json': '{}',
+    'background.js': "const x = 1;",
+    'content/bridge.js': "fetch('https://www.youtube.com/x');",
+  }, { dashboard: true, src: true, content: true });
+  assert.deepStrictEqual(findViolations(root), ['content/bridge.js: fetch(']);
+});
+
 test('reference, test, tools, docs, scripts and node_modules are never scanned', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'wl-nn-'));
   for (const dir of ['reference', 'test', 'tools', 'docs', 'scripts', 'node_modules', 'tasks', '.github']) {

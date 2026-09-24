@@ -24,9 +24,12 @@ sync, and how to work beside a card in progress are in
 ## Try it
 
 1. Clone the repository.
-2. Open `chrome://extensions` and turn on developer mode.
-3. Click "Load unpacked" and select the repository root.
-4. Click the toolbar icon. The dashboard opens in a tab.
+2. Run `npm install` once, then `npm run build`. This writes only the
+   shipped files (`manifest.json`, `background.js`, `dashboard/`, `src/`,
+   `content/`) into `dist/`.
+3. Open `chrome://extensions` and turn on developer mode.
+4. Click "Load unpacked" and select the `dist/` folder.
+5. Click the toolbar icon. The dashboard opens in a tab.
 
 For now the dashboard is an empty page with a heading. It does not talk to
 YouTube yet.

@@ -19,8 +19,9 @@ the browser harness is scoped out of it by path.
 
 ## Loading the extension
 
-`chrome://extensions`, enable developer mode, "Load unpacked", select the
-repository root. Open the dashboard from the toolbar icon.
+`npm run build` writes only the shipped files into `dist/`. Then
+`chrome://extensions`, enable developer mode, "Load unpacked", select
+`dist/`. Open the dashboard from the toolbar icon.
 
 ## The no-network rule
 
