@@ -300,3 +300,24 @@ Found: wiring.test.js still carries its own manifestPaths copy that
 agrees today; candidate for a later cleanup issue.
 Merged: PR #36, regular merge, CI green, after one review round.
 Next: #6.
+
+## 2026-09-24 07:53  #6 playlist parser, merged in PR #37
+
+Worked: src/core/playlistParser.js parses a Watch Later page into
+Entry objects via parsePage(json), returning entries,
+continuationToken and droppedItems. Ported from upstream
+extractEntriesAndContinuation in two commits, verbatim then
+restructure, and the verbatim copy stays exported beside parsePage with
+two parity tests pinning them together. The null contract is now in
+docs/ARCHITECTURE.md: channelName, channelId and unavailableReason are
+null when YouTube gives nothing, and rules.js treats null as missing
+data that never decides a removal. watchedPercent stores 0 for a
+missing overlay, clamped, because 0 is the true reading. The captured
+fixtures have no unavailable item and no Short, so both are asserted
+from the synthetic fixture, stated plainly in the PR. 175 unit tests,
+8 browser assertions, 300 entries over 3 pages, 0 dropped.
+Did not work: the step 5 progress entry was missing while its commit
+claimed to carry it, caught in the round 1 review; fixed by a reword
+rebase plus a new tasks-only commit.
+Merged: PR #37, regular merge, CI green, after two review rounds.
+Next: #35, then #7.
