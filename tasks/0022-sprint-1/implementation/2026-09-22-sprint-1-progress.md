@@ -340,3 +340,27 @@ schedule but not the await, an unawaited sleep(pauseMs) left the
 suite green; fixed by the flag observation in the round 2 rework.
 Merged: PR #38, regular merge, CI green, after two review rounds.
 Next: #7.
+
+## 2026-09-24 10:12  #7 scanner, merged in PR #39
+
+Worked: src/core/scanner.js exports scan({ innertube, onProgress,
+signal }), SortNotVerifiedError and SortDriftError. It sets the Watch
+Later order to oldest first and polls until the server confirms it,
+reading the edit ack first and falling back to a fresh browse, six
+attempts 350 ms apart, as upstream does. Then it refuses the scan if
+the first page it actually reads reports any other order, follows
+continuation tokens with a seen-token guard and a 50 ms page throttle,
+dedupes on setVideoId, and assigns positions 1..N. The result carries
+scannedAt, pageCount, entryCount, status, sortState and a SHA-256
+fingerprint of the ordered setVideoId list for #14. An aborted scan
+returns fingerprint null. 16 scanner tests, 191 unit tests, 8 browser
+assertions. Mutations that go red: verify throw, drift check,
+seen-token guard (bounded, no hang), throttle, abort fingerprint.
+Did not work: the first cut skipped the port-verbatim-first rule and
+lost upstream's drift check, seen-token guard and throttle. Round 1
+caught all three. Round 2 caught a seen-token test that hung rather
+than failed, and a stale PR body. The PR body's -t filter commands
+still run the whole file, so the review file carries the corrected
+--test-name-pattern commands.
+Merged: PR #39, regular merge, CI green, after three review rounds.
+Next: #12.

@@ -1,9 +1,9 @@
 # STATE
 
-CURRENT ISSUE: #7 scan the whole playlist in verified oldest-first
-order, then #12.
-WAVE: 4. #35 merged as PR #38. #7 is next and unblocked.
-LAST COMPLETED: #35 (PR #38, merged 2026-09-24).
+CURRENT ISSUE: #12 dashboard: scan and show the playlist in a table.
+WAVE: 4. #7 merged as PR #39. #12's dependencies #7, #10 and #11 are
+all closed, so #12 is unblocked.
+LAST COMPLETED: #7 (PR #39, merged 2026-09-24).
 BLOCKED ON: nothing. #17 still needs Kamran live. The stray branch
 feature/0004-sapisidhash-signing waits for his one-click deletion.
 Kamran's signed-in rerun of the ensureTab fix is in
