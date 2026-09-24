@@ -78,7 +78,12 @@ function emptyTerminalPage(selectedOrder = OLDEST_ORDER) {
   return pageWithEntries([], { selectedOrder });
 }
 
-function fakeInnertube({ editResponses = [], browseResponses = [], continuationResponses = {} } = {}) {
+function fakeInnertube({
+  editResponses = [],
+  browseResponses = [],
+  continuationResponses = {},
+  maxContinuationCalls = Infinity,
+} = {}) {
   const calls = { edit: 0, browse: 0, continuation: [] };
   const editQueue = [...editResponses];
   const browseQueue = [...browseResponses];
@@ -93,6 +98,12 @@ function fakeInnertube({ editResponses = [], browseResponses = [], continuationR
       return browseQueue.shift() ?? realPages[0];
     },
     async browseContinuation(token) {
+      if (calls.continuation.length >= maxContinuationCalls) {
+        throw new Error(
+          `browseContinuation called ${calls.continuation.length + 1} times, exceeding the test cap of ` +
+          `${maxContinuationCalls}: a seen-token guard that isn't skipping repeats would loop forever here`
+        );
+      }
       calls.continuation.push(token);
       const next = continuationResponses[token];
       if (next === undefined) throw new Error(`unscripted continuation token ${token}`);
@@ -187,10 +198,13 @@ test('pagination skips an already-consumed continuation token instead of looping
   const { scan } = require('../src/core/scanner.js');
   const looping = pageWithEntries([{ setVideoId: 'S2', videoId: 'v2' }], { continuationToken: 'TOK_A' });
   const page1 = pageWithEntries([{ setVideoId: 'S1', videoId: 'v1' }], { continuationToken: 'TOK_A' });
+  // The cap bounds a seen-token guard regression: without the guard, TOK_A is fetched
+  // over and over and the fake throws once it passes the cap instead of the suite hanging.
   const innertube = fakeInnertube({
     editResponses: [sortMenu(OLDEST_ORDER)],
     browseResponses: [page1],
     continuationResponses: { TOK_A: looping },
+    maxContinuationCalls: 5,
   });
   const result = await scan({ innertube, sortVerifyPollMs: 0, scanPageThrottleMs: 0 });
   assert.strictEqual(result.status, 'complete');

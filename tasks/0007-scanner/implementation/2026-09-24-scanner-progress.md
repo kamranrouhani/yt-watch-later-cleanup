@@ -117,3 +117,29 @@ upstream). `npm test` prints `# tests 191`, `# pass 191`, `# fail 0`.
 `npm run check` prints `all files parse`. `npm run test:browser` prints 8
 `ok` lines, unaffected.
 Next: push, update PR #39, hand back to `metis-review` round 2.
+
+## 2026-09-24 10:10  Step 6: Round 2 fixes: bound the seen-token test, refresh the PR body
+
+Worked: `fakeInnertube` in `test/scanner.test.js` takes an optional
+`maxContinuationCalls`; `browseContinuation` throws once
+`calls.continuation.length` reaches it, naming the seen-token guard as
+what should have stopped the calls. The "pagination skips an
+already-consumed continuation token" test now passes `maxContinuationCalls:
+5`, so a removed guard fails the test by name instead of the suite
+hanging past `--test-timeout`. PR #39's body was rewritten to describe
+the current behaviour and command output: `SortDriftError` and the
+first-page drift refusal, the seen-token guard, `scanPageThrottleMs`
+(default 50), the null fingerprint on abort, and that captured page 1 is
+served with its sort menu flipped to oldest-first for the acceptance-box
+test (`withOldestSortSelected`), plus the 191-test count.
+Did not work: nothing new; the mutation below is the guard-removal repro
+round 2 asked for.
+Verification: with `seenTokens.has(nextToken)` mutated to `if (false)`,
+`node --test --test-timeout=5000 test/scanner.test.js -t
+"already-consumed"` prints `not ok 4 - pagination skips an
+already-consumed continuation token instead of looping` in 1.8ms, no
+timeout, no cancellation, `# fail 1`. Reverted, then `node --test
+test/scanner.test.js` prints `# tests 16`, `# pass 16`, `# fail 0`; `npm
+test` prints `# tests 191`, `# pass 191`, `# fail 0`; `npm run check`
+prints `all files parse`; `npm run test:browser` prints 8 `ok` lines.
+Next: push, update PR #39 body, hand back to `metis-review` round 3.
