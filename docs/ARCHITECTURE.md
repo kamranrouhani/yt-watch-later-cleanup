@@ -75,13 +75,14 @@ Entry {
   videoId,
   position,            // 1-based under oldest-first sort
   title,
-  channelName, channelId,
-  durationSeconds,     // null for live or unknown
-  watchedPercent,      // 0 when no progress overlay
+  channelName,         // null when the renderer is missing or carries no name
+  channelId,           // null when the byline has no browseId
+  durationSeconds,     // null for live, unknown or unparseable
+  watchedPercent,      // 0 when no progress overlay, clamped to 0..100
   playable,            // false for deleted, private, blocked
-  unavailableReason,
+  unavailableReason,   // null for playable items
   publishedText,       // "3 years ago", as YouTube renders it
-  isShort, isLive,
+  isShort, isLive,     // false when the renderer says otherwise
   enrichment: {        // present only after a Data API lookup
     categoryId,
     topics,            // Wikipedia slugs, e.g. "Association_football"
@@ -90,6 +91,21 @@ Entry {
   }
 }
 ```
+
+Every field the parser can fail to derive is `null` or a boolean, never
+`undefined`: a null text field is a fact YouTube did not give us and is
+covered by the missing-data rule (the `isMissing` check in rules.js treats
+`null` and `undefined` alike, so a condition on it evaluates as missing and
+can never decide a removal). `channelId`, `channelName` and
+`unavailableReason` are the fields where this actually happens in captures,
+so they are written into the parser's tests explicitly.
+
+`watchedPercent` is the one field that is special here: a missing progress
+overlay is stored as **0, not null**, because 0 is a true reading (YouTube
+serve no overlay for a fully unwatched item), and no rule needs to
+distinguish "0 watched" from "not told". Rules operating on
+`watchedPercent` (`>=`, `<`, `== 0`) therefore always get a number, and the
+missing-data protection they need comes from the clamp, not from a null.
 
 ## Rule semantics
 
