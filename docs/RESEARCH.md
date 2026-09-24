@@ -87,22 +87,38 @@ Cost: `videos.list` is 1 quota unit per call and takes up to 50 IDs.
 A 5,000 video playlist is 100 units against the default 10,000 per day.
 Results are cached per video, so only new videos cost anything on later runs.
 
-## Open questions
+## Answers from the real capture, 2026-09-24
 
-These are unverified and are settled by the capture spike in sprint 1, using
-real responses from a signed-in session.
+These settle three of the five open questions. Full evidence with JSON
+paths into the committed fixtures is in
+`tasks/0003-capture-spike/implementation/findings.md`.
 
-1. **Is there an added-at timestamp per item?** Upstream never reads one. It
-   relies on list position under the oldest-first sort. If there is no
-   timestamp, rules can say "the oldest 300" but not "added before March".
-   Google Takeout's Watch Later CSV does carry a per-item timestamp and could
-   be imported to fill the gap.
-2. **Does the overlay appear for every watched video,** or only for partially
-   watched ones? A fully watched video may show a different overlay.
-3. **Are Watch Later items still `playlistVideoRenderer`,** or has YouTube
-   moved this page to the newer `lockupViewModel` shape?
-4. **Can the dashboard call InnerTube directly** from the extension page with
-   host permissions, or must every call run inside a youtube.com tab? The
-   architecture assumes the tab, which is what upstream proves works.
-5. **Where does rate limiting start** for batched removals, and what does it
-   return?
+1. **Is there an added-at timestamp per item?** No. All 300 items have the
+   same fourteen keys, none of them a date; the only "Date added" strings are
+   the sort menu labels. The oldest-first sort with
+   `ACTION_SET_PLAYLIST_VIDEO_ORDER 2` and `params "QAE%3D"` (verified in the
+   capture, not assumed from upstream) is the only ordering signal. Calendar
+   date rules still wait on the Takeout import (#20). The "added before
+   March" example stays unbuildable from Watch Later alone.
+2. **Does the overlay appear for every watched video?** Yes, including fully
+   watched ones. All 187 watched items carry
+   `thumbnailOverlayResumePlaybackRenderer.percentDurationWatched` and a
+   `WATCHED` badge; the 113 untouched items carry neither. A 100 percent value
+   is a regular overlay, no special ending shape.
+3. **Are Watch Later items still `playlistVideoRenderer`?** Yes, 300 of 300,
+   `lockupViewModel` 0. The sort menu has already moved to the new
+   `listItemViewModel`/`chipViewModel` dialect; item menus have not.
+4. **Can the dashboard call InnerTube directly?** Still open. The capture ran
+   inside a youtube.com tab; settling this belongs to the bridge work in #6.
+5. **Where does rate limiting start?** Still open, removals were not
+   performed by the spike. The capture proves every item menu carries
+   `ACTION_REMOVE_VIDEO` and move commands, and the page menu carries
+   `ACTION_REMOVE_WATCHED_VIDEOS`, so the remover's write path targets the
+   right commands. The limit gets probed in #17.
+
+Also settled while the capture was open: the oldest sort's `params` is
+`"QAE%3D"` with `ACTION_SET_PLAYLIST_VIDEO_ORDER 2` (upstream's
+`CAFAAQ%3D%3D` is the removal params, a different value), and item menus hold
+`ACTION_REMOVE_VIDEO`, `ACTION_MOVE_VIDEO_AFTER` and
+`ACTION_MOVE_VIDEO_BEFORE` per item. Item `videoInfo` carries cheap view
+count and upload age strings.
