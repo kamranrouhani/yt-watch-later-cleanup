@@ -321,3 +321,22 @@ claimed to carry it, caught in the round 1 review; fixed by a reword
 rebase plus a new tasks-only commit.
 Merged: PR #37, regular merge, CI green, after two review rounds.
 Next: #35, then #7.
+
+## 2026-09-24 09:12  #35 remover sleep flake, merged in PR #38
+
+Worked: test/remover.test.js "a default sleep is used when none is
+injected" flaked 2 in 40 runs on this host because it asserted
+Date.now() - start >= 5 around a real 5 ms pause and Node timers can
+fire up to a millisecond early. Rewritten to observe the timer call
+itself: a scoped stub records the scheduled delay, asserted exactly
+[5], and sets a flag in its callback, which the recording innertube
+checks at entry to the second editPlaylist, so both the schedule and
+the await are pinned with no wall clock. src/core/remover.js is
+untouched. Three bites proven red (Promise.resolve default, call
+removed, call unawaited), each restored byte-identical. 50 runs in a
+row with zero failures, 175 unit tests, 8 browser assertions.
+Did not work: round 1 caught that the first rewrite pinned the
+schedule but not the await, an unawaited sleep(pauseMs) left the
+suite green; fixed by the flag observation in the round 2 rework.
+Merged: PR #38, regular merge, CI green, after two review rounds.
+Next: #7.
