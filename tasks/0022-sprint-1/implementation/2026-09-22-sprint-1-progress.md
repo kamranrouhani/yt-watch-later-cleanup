@@ -281,3 +281,22 @@ Found: test/remover.test.js:175 flakes on a 1 ms early timer, needs its
 own issue.
 Merged: PR #34, regular merge, CI green, after two review rounds.
 Next: #24, then #6.
+
+## 2026-09-24 06:40  #24 shipped build, merged in PR #36
+
+Worked: npm run build writes only the shipped files into gitignored
+dist/, from scripts/shipped-files.js, one list derived from
+manifest.json plus background.js, manifest.json, dashboard/, src/,
+content/. The no-network scan imports the same list, so content/ is
+scanned for the first time, with a red-first test for the widening.
+README and CONTRIBUTING point at npm run build and dist/. 151 unit
+tests, 8 browser assertions, and a one-off Playwright load of dist/
+with no errors, 96K. No zip: the folder meets both acceptance boxes.
+Did not work: the first shared list omitted background.js because the
+manifest fixtures use empty manifests, three tests silently found
+nothing; fixed by adding it explicitly. test/remover.test.js:175 flaked
+once, the known #33 flake, rerun clean.
+Found: wiring.test.js still carries its own manifestPaths copy that
+agrees today; candidate for a later cleanup issue.
+Merged: PR #36, regular merge, CI green, after one review round.
+Next: #6.
