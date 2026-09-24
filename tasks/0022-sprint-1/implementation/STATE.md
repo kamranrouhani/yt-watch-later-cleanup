@@ -1,10 +1,9 @@
 # STATE
 
-CURRENT ISSUE: #35 remover default-sleep test flakes by a millisecond,
-then #7 scan the whole playlist in verified oldest-first order.
-WAVE: 4. #35 open and unblocked, #7 blocked until #6 closes (this card
-merges #6 as PR #37).
-LAST COMPLETED: #6 (PR #37, merged 2026-09-24).
+CURRENT ISSUE: #7 scan the whole playlist in verified oldest-first
+order, then #12.
+WAVE: 4. #35 merged as PR #38. #7 is next and unblocked.
+LAST COMPLETED: #35 (PR #38, merged 2026-09-24).
 BLOCKED ON: nothing. #17 still needs Kamran live. The stray branch
 feature/0004-sapisidhash-signing waits for his one-click deletion.
 Kamran's signed-in rerun of the ensureTab fix is in
