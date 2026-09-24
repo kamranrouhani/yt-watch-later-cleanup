@@ -41,3 +41,44 @@ only under raw/ (gitignored, checked with git check-ignore) and is scrubbed
 before anything is committed.
 Put it at: test/fixtures/captured/raw/ on LXC103
 Status: open
+
+## 2026-09-22  #3  manual checklists for the merged issues
+
+For: #1 and #11 acceptance boxes that only run in a signed-in browser.
+Neither can run on this host, and both are the last proof that the merged
+core works in your Chrome.
+Steps:
+  1. tasks/0001-scaffold-extension/implementation/manual-check.md (5 steps)
+  2. tasks/0011-tab-bridge/implementation/manual-check.md (5 steps, the
+     signed-in ping is the one that matters)
+Must not contain: nothing sensitive here, it is only observations.
+Put it at: reply in chat with pass or fail per step.
+Status: open
+
+## 2026-09-22  housekeeping  delete one stray branch on GitHub
+
+For: cleaning the branch list. The branch holds only commits already in
+the merged history; a merge race recreated it and this host's config
+forbids me from deleting branches.
+Steps:
+  1. Open https://github.com/kamranrouhani/yt-watch-later-cleanup/branches
+  2. Delete feature/0004-sapisidhash-signing
+Must not contain: nothing, it is a click.
+Put it at: nowhere, reply done when it is gone.
+Status: open
+
+## 2026-09-22  sprint 2  a Takeout export and a Data API key, deferred
+
+For: #20 (added-at timestamps from a Google Takeout export of Watch Later)
+and #18, #19 (topic rules need a YouTube Data API key of your own). You
+said early in the session to get back to these later. Sprint 2 only.
+Steps:
+  1. Takeout: takeout.google.com, deselect all, tick only "YouTube and
+     YouTube Music", JSON format, just Watch Later.
+  2. API key: console.cloud.google.com, YouTube Data API v3, an API key.
+     Put the key in chat only when #18 starts, it goes into .env.
+Must not contain: for the Takeout, it is your own watch data; it lands
+under a gitignored raw/ folder like any capture. The API key goes into
+.env, never into a commit.
+Put it at: test/fixtures/captured/raw/ for the Takeout, .env for the key.
+Status: open, deferred to sprint 2

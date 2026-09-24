@@ -168,3 +168,22 @@ repaired, logged.
 Wave 4 is done: #9 and #11 merged. Remaining sprint issues all wait on
 #6 (parser), which waits on #3 (capture, Kamran).
 Next: nothing workable. Blocked on the capture.
+
+## 2026-09-24 01:08  session 1 wrap: what is merged, what waits
+
+Worked: #1, #4, #2, #5, #8, #10, #9, #11 merged this session through PRs
+23, 26, 27, 28, 29, 30, 31, 32, every one a regular merge commit with CI
+green. #3 went to draft PR #25 with its plan at step 8. The suite on main
+now: 119 unit tests and 6 browser assertions, all green, verified just
+before this entry.
+Found: every issue behind #6 needs the capture, so the session ends with
+one blocker and not many. The manual checklists for #1 and #11 are open,
+the stray branch deletion is open, and the sprint 2 asks (Takeout, Data
+API key) stay deferred.
+Documented: open-items-for-kamran.md collects his items in one list,
+BLOCKED.md has the formal entries, HANDOVER.md is refreshed, and
+KICKOFF-2.md is the paste prompt for the next session.
+Did not work: nothing new. The known limits stand: no real youtube.com
+from this host, no toolbar clicks in headless, no signed-in session.
+Next: session 2, from KICKOFF-2.md. It starts by checking for the capture
+file and then either finishes #3 or does #24 while waiting.
