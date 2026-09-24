@@ -187,3 +187,37 @@ Did not work: nothing new. The known limits stand: no real youtube.com
 from this host, no toolbar clicks in headless, no signed-in session.
 Next: session 2, from KICKOFF-2.md. It starts by checking for the capture
 file and then either finishes #3 or does #24 while waiting.
+
+## 2026-09-24 04:30  session 2, block A: PR #25 rebased, #3 finished and merged
+
+Kamran arrived with both capture files and passed both manual checklists
+(#1 all five pass, details size under 1 MB since he loads the repo folder
+without node_modules; #11 steps 1-4 pass with the signed-in ping returning
+{ clientVersion: "2.20260922.06.00", signedIn: true }, step 5 failing with
+an ensureTab URL-query miss, filed as follow-up work).
+Found: the draft PR #25 had three merge conflicts from main's progress since
+2026-09-22. Per Kamran's explicit preference, rebased the branch onto main
+rather than merging main in (his rule: rebase over merge on an unmerged
+branch; approved force by pushing with the +ref form after the scripted
+--force-with-lease was deny-blocked). Conflicts: package.json kept all three
+browser specs; STATE.md and BLOCKED.md took main's newer versions.
+Worked: step 9 of the capture plan on the real data. The scrubber threw on
+45 paths: a real channel is literally named "Channel 8", colliding with the
+"Channel <n>" placeholder pool, and a later collision surfaced as substring
+("Channel 80" contains "Channel 8"). Fixed buildMapping to skip placeholders
+that equal or contain a real value; test-first, planted in the synthetic
+fixture, seen failing before the fix. The eye pass over the scrubbed output
+also caught googlevideo initplayback urls carrying the client ip; the
+scrubber now replaces those whole, also test-first. Committed fixtures
+(3 pages, capture.json, README, 1569-hash denylist) plus the fixes.
+Documented: findings.md answers the five research questions with JSON paths;
+RESEARCH.md's open-questions section rewritten with the capture's answers;
+known oldest-sort params corrected to "QAE%3D" from primary evidence.
+Merged: PR #25 as a regular merge (514227f), CI green. Local main pulled;
+140/140 unit and 7/7 browser assertions re-run after the pull, all pass.
+#3 closed on GitHub. Kanban card t_164ddaa5 done. pr delete-branch was
+blocked by the worktree footprint; the remote branch remains and is cleaned
+with the stray-branch housekeeping (feature/0004-sapisidhash-signing) below.
+Blocked: the #11 ensureTab fix and #24 remain open; both are branchable from
+main without the capture. The stray branch deletion still waits on Kamran.
+Next: housekeeping commit for these logs, then the ensureTab fix, then #24.

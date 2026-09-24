@@ -40,7 +40,10 @@ your titles, channels, account name and visitorData, which is why it goes
 only under raw/ (gitignored, checked with git check-ignore) and is scrubbed
 before anything is committed.
 Put it at: test/fixtures/captured/raw/ on LXC103
-Status: open
+Status: resolved 2026-09-24. Kamran ran the snippet twice and sent both
+files; summaries identical, kept -051020. Merged in PR #25 (merge commit
+514227f). Resumed at step 9 of the plan; the questions it settles and the
+two scrubber bugs found on the real data are in the capture progress log.
 
 ## 2026-09-22  #3  manual checklists for the merged issues
 
@@ -53,7 +56,17 @@ Steps:
      signed-in ping is the one that matters)
 Must not contain: nothing sensitive here, it is only observations.
 Put it at: reply in chat with pass or fail per step.
-Status: open
+Status: resolved 2026-09-24. Kamran's report: checklist 1 (#1 scaffold), all
+five steps pass, and the details page size is under 1 MB, the node_modules
+note does not apply to his load. Checklist 2 (#11 tab bridge): steps 1 to 3
+pass, step 3's signed-in ping returned
+{ clientVersion: "2.20260922.06.00", signedIn: true }, matching the page.
+Step 4 was hit naturally by accident and rejected with TabGoneError, which
+is the expected behavior. Step 5 failed as observed: after closing the tab,
+ensureTab() queried the exact WATCH_LATER_URL, missed the (redirected or
+renamed URL) tab, opened an inactive tab no content script attaches to, and
+the ping rejected with "Could not establish connection". Filed as follow-up
+work; the fix belongs to the tab bridge, on a fresh branch from main.
 
 ## 2026-09-22  housekeeping  delete one stray branch on GitHub
 
