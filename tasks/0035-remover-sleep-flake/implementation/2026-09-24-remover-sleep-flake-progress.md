@@ -65,3 +65,39 @@ dist staging outside this worktree, confirmed gone from here with
 `git status --porcelain`.
 Next: step 5, self review, PR, hand to review.
 
+## 2026-09-24 09:00  Rework steps R1 and R2: round 1 finding, plan, await pinned
+
+Worked: review round 1 requested one change, the default-sleep test no
+longer proves the pause is awaited. Wrote
+plans/2026-09-24-0900-round1-rework.md (its supersede note also retracts
+the plan's "awaiting is covered by the run finishing after the schedule"
+reasoning, which the reviewer showed is not true), then changed the
+stubbed timer to set a `sleepResolved` flag in its callback and made the
+fake record, at entry to the second `editPlaylist`, whether the flag was
+up. The run resumes from the sleep's resolve in the same microtask chain,
+so in the green path the flag is up before batch 2 starts, and under the
+unawaited mutation the second call enters before any timer callback can
+run, so the flag is down. No wall-clock reads, no manual gate.
+Did not work: two gate constructions with a release the test holds were
+written first and discarded, both more moving parts than the observation
+needs and one with a deadlock under the removed-call bite. The flag-in-
+the-timer-callback version is deterministic by the microtask ordering
+alone.
+Verification: `node --test test/remover.test.js` `# pass 14` `# fail 0`.
+All three bites red, each restored byte-identical (`git diff --stat`
+empty after each): defaultSleep as `Promise.resolve()`, test 12 red;
+`await sleep(pauseMs)` removed from the batch loop, test 12 red; the
+unawaited mutation `sleep(pauseMs)` without await, test 12 red with
+`false !== true` at the await assertion, `# fail 1` in each case.
+Next: step R3, the 50-run loop and the full suite.
+
+## 2026-09-24 09:04  Rework step R3: 50 runs in a row, full suite green
+
+Worked: the 50-run loop on the reworked test, then the whole suite in the
+worktree, same commands as before the rework.
+Verification: `fails=0; for i in $(seq 1 50); do node --test
+test/remover.test.js >/dev/null 2>&1 || fails=$((fails+1)); done` printed
+`runs: 50, failures: 0`. `npm run check` `all files parse`. `npm test`
+`# tests 175` `# pass 175` `# fail 0`. `npm run test:browser` 8 ok lines.
+Next: step R4, self review, PR body update, push, hand to review round 2.
+
