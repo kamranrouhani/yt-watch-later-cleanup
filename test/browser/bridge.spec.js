@@ -32,6 +32,7 @@ async function main() {
   try {
     await context.addCookies([
       { name: 'SAPISID', value: 'FakeSapisidForBridge', domain: '.youtube.com', path: '/', secure: true },
+      { name: 'CONSENT', value: 'YES+1', domain: '.youtube.com', path: '/', secure: true },
     ]);
     await context.route('https://www.youtube.com/**', async (route) => {
       const request = route.request();
@@ -109,6 +110,44 @@ async function main() {
     });
     assert.strictEqual(gone, 'TabGoneError', `expected TabGoneError, got ${gone}`);
     console.log('ok closing the tab mid request rejected with TabGoneError, not a hang');
+
+    await context.unrouteAll({ behavior: 'wait' });
+    await context.route('https://www.youtube.com/**', async (route) => {
+      const request = route.request();
+      const url = new URL(request.url());
+      if (url.pathname === '/playlist') {
+        return route.fulfill({ status: 200, contentType: 'text/html', body: FAKE_PAGE });
+      }
+      if (url.pathname === '/youtubei/v1/browse') {
+        const auth = request.headers().authorization || '';
+        if (!/^SAPISIDHASH \d+_[0-9a-f]{40}$/.test(auth)) {
+          return route.fulfill({ status: 401, contentType: 'application/json', body: '{"error":"no auth"}' });
+        }
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(BROWSE_RESPONSE) });
+      }
+      return route.fulfill({ status: 404, body: '' });
+    });
+    await context.route('https://consent.youtube.com/**', async (route) => {
+      const url = new URL(route.request().url());
+      const target = url.searchParams.get('continue') || 'https://www.youtube.com/playlist?list=WL';
+      return route.fulfill({ status: 302, headers: { location: target } });
+    });
+    const newPagePromise = context.waitForEvent('page');
+    const reconnectedPromise = dashboard.evaluate(async () => {
+      const bridge = WLCore.tabBridge.createTabBridge({ ...chrome, tabs: chrome.tabs });
+      await bridge.ensureTab();
+      return bridge.request('ping', null);
+    });
+    // chrome.tabs.create opens a tab whose first navigation is not seen by
+    // Playwright's context.route, so it escapes to the real network and hits
+    // consent.youtube.com on this host's egress. Driving that tab's own
+    // navigation from Node routes it through the fake page instead, after
+    // which ensureTab's readiness polling sees the injected content script.
+    const newPage = await newPagePromise;
+    await newPage.goto('https://www.youtube.com/playlist?list=WL');
+    const reconnected = await reconnectedPromise;
+    assert.strictEqual(reconnected.clientVersion, '2.20260923.08.00');
+    console.log('ok closing the tab then calling ensureTab again opens a fresh one and ping succeeds');
 
     const unexpected = errors.filter((e) => !/the YouTube tab closed mid request/.test(e));
     assert.deepStrictEqual(unexpected, []);

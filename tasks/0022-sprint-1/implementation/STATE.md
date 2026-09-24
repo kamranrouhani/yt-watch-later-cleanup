@@ -1,10 +1,12 @@
 # STATE
 
-CURRENT ISSUE: #33 ensureTab waits for the tab to answer, then #24, then #6.
-WAVE: 4. #7 and #33 open, #6 unblocked now that #3 merged.
-LAST COMPLETED: #3 (PR #25, merged 2026-09-24, merge commit 514227f).
+CURRENT ISSUE: #24 keep dev files out of the loaded extension, then #6.
+WAVE: 4. #7 open, #6 unblocked since #3 merged.
+LAST COMPLETED: #33 (PR #34, merged 2026-09-24).
 BLOCKED ON: nothing. #17 still needs Kamran live. The stray branch
 feature/0004-sapisidhash-signing waits for his one-click deletion.
+Kamran's signed-in rerun of the ensureTab fix is in
+tasks/0033-ensuretab-ready/implementation/manual-check.md.
 MODE: one kanban card per issue on board yt-cleanup, see
 plans/2026-09-24-card-execution-amendment.md. Each card's review run
 overwrites this file on its PR branch before merging.

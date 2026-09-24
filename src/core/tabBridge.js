@@ -18,7 +18,24 @@
     }
   }
 
-  function createTabBridge(chromeApi, { timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
+  const DEFAULT_READY_POLL_MS = 100;
+
+  function isWatchLaterUrl(url) {
+    if (!url) return false;
+    try {
+      const parsed = new URL(url);
+      return parsed.hostname === 'www.youtube.com'
+        && parsed.pathname === '/playlist'
+        && parsed.searchParams.get('list') === 'WL';
+    } catch {
+      return false;
+    }
+  }
+
+  function createTabBridge(chromeApi, {
+    timeoutMs = DEFAULT_TIMEOUT_MS,
+    readyPollMs = DEFAULT_READY_POLL_MS,
+  } = {}) {
     let connectedTabId = null;
     let lastId = 0;
     const pending = new Map();
@@ -48,15 +65,62 @@
       return false;
     });
 
-    async function ensureTab() {
-      const [existing] = await chromeApi.tabs.query({ url: WATCH_LATER_URL });
-      if (existing) {
-        connectedTabId = existing.id;
-        return existing;
+    async function probeOnce(tabId, attemptTimeoutMs) {
+      const id = (lastId += 1);
+      return new Promise((resolveOuter, rejectOuter) => {
+        let settled = false;
+        const timer = setTimeout(() => {
+          if (settled) return;
+          settled = true;
+          pending.delete(id);
+          resolveOuter(false);
+        }, attemptTimeoutMs);
+        pending.set(id, {
+          resolve: () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            resolveOuter(true);
+          },
+          reject: (err) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            if (err instanceof TabGoneError) {
+              rejectOuter(err);
+            } else {
+              resolveOuter(true);
+            }
+          },
+          timer,
+        });
+        chromeApi.tabs.sendMessage(tabId, { wlRequest: true, kind: '__wlReadyProbe', id, payload: null })
+          .catch(() => {
+            pending.delete(id);
+          });
+      });
+    }
+
+    async function waitUntilReady(tabId) {
+      const deadline = Date.now() + timeoutMs;
+      for (;;) {
+        const answered = await probeOnce(tabId, readyPollMs);
+        if (answered) return;
+        if (Date.now() >= deadline) {
+          connectedTabId = null;
+          throw new TimeoutError(`tab bridge: the tab never became ready within ${timeoutMs} ms`);
+        }
       }
-      const created = await chromeApi.tabs.create({ url: WATCH_LATER_URL, active: false });
-      connectedTabId = created.id;
-      return created;
+    }
+
+    async function ensureTab() {
+      const candidates = await chromeApi.tabs.query({ url: 'https://www.youtube.com/playlist*' });
+      const existing = candidates.find((tab) => isWatchLaterUrl(tab.url));
+      const tab = existing
+        || await chromeApi.tabs.create({ url: WATCH_LATER_URL, active: false });
+      connectedTabId = tab.id;
+      await waitUntilReady(tab.id);
+      return tab;
     }
 
     async function request(kind, payload) {
