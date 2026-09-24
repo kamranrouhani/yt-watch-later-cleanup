@@ -9,7 +9,8 @@
     "test:watch": "node --test --watch \"test/*.test.js\"",
     "test:browser": "node test/browser/load.spec.js && node test/browser/bridge.spec.js && node test/browser/capture.spec.js",
     "test:all": "npm run check && npm test && npm run test:browser",
-    "check": "node scripts/check-syntax.js"
+    "check": "node scripts/check-syntax.js",
+    "build": "node scripts/build.js"
   },
   "devDependencies": {
     "playwright": "^1.56.0"
