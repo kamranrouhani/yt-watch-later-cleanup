@@ -108,3 +108,17 @@ and ping succeeds"; `npm run test:browser` full run green, 8 `ok` lines
 across `load.spec.js`, `bridge.spec.js`, `capture.spec.js`.
 Next: step 5, manual checklist, review, PR.
 
+## 2026-09-24 05:56  Step 5: manual checklist, self review
+
+Worked: wrote `implementation/manual-check.md` rerunning #11's step 5
+scenario plus the new query-parameter reuse case. Wrote the pre-merge
+review to `reviews/2026-09-24-0555-pre-merge.md`: every acceptance box
+mapped to its test, attribution check clean, no dashes, task files
+committed separately from code (`41ea4ae` code, `a2666d7` tasks so far),
+identity confirmed as Kamran Rouhani, plan freeze confirmed with
+`git diff 5d09448 HEAD` on the original plan file (empty).
+Verification: `npm test` and `npm run test:browser` both green, per the
+review file's own verification section.
+Next: push, open the PR, hand off for review.
+
+
