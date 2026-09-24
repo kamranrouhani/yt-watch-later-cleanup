@@ -272,6 +272,7 @@ test('acceptance 3: cancel mid scan leaves previous saved scan intact', async ()
   await new Promise((resolve) => setTimeout(resolve, 50));
 
   assert.strictEqual(win.document.getElementById('progress').hidden, true, 'progress hidden after cancel');
+  assert.strictEqual(win.document.getElementById('saved-scan').hidden, false, 'saved scan restored after cancel');
 
   dom.window.close();
 });
