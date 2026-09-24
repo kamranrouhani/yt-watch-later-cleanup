@@ -12,6 +12,16 @@ batches.
 Status: in development. Nothing here is usable yet. See
 [ROADMAP.md](ROADMAP.md) and the open issues.
 
+## How the work is organised
+
+Issues run one at a time through an autonomous pipeline: a kanban board
+picks each open issue up in a fresh agent session (implementation in a
+git worktree, then a code review, then a merge once CI is green). The
+rules, the issue/card sync conventions and the guardrails against two
+sessions colliding are in [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md).
+Branch protection on `main` requires the `test` check, so nothing merges
+with a red suite.
+
 ## Try it
 
 1. Clone the repository.
