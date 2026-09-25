@@ -16,22 +16,29 @@ and each starts only when the one before it is done.
    [`tasks/0022-sprint-1/LOOP.md`](../tasks/0022-sprint-1/LOOP.md): task
    folder, plan committed alone, failing test first, green suite, progress
    entry per step. It ends with a pushed branch and a PR that says
-   `Closes #N`. A separate run then reviews it cold, runs the suite, and
-   writes `tasks/NNNN-<slug>/reviews/YYYY-MM-DD-HHMM-review-r<round>.md`
-   with its header taken from git. Round 1 may send the card back to
-   implementation on the same branch; round 2 always hands on. The build
-   card never merges.
-2. **Gate.** Round 3 is a fixed review by a stronger reviewer than rounds 1
-   and 2. It reads the PR cold, uses the earlier reviews as input, and
-   writes `reviews/YYYY-MM-DD-HHMM-review-r3-gate.md` with numbered findings
-   or none. It changes no code.
+   `Closes #N`. A separate run then reviews it cold, runs the suite, checks
+   CI, and writes
+   `tasks/NNNN-<slug>/reviews/YYYY-MM-DD-HHMM-review-r<round>.md` with its
+   header taken from git. Rounds 1 and 2 may send the card back to
+   implementation on the same branch; round 3 always hands on. If the card
+   stops on a problem code can fix, it gets one more rework round
+   automatically, and if that fails too it is handed to the gate with the
+   problem listed as open. It only waits for Kamran on things code cannot
+   solve. The build card never merges and does not need green CI.
+2. **Gate.** A fixed review by a stronger reviewer than the build rounds.
+   It reads the PR cold, uses the earlier reviews as input, takes over
+   anything the build card left open, and writes
+   `reviews/YYYY-MM-DD-HHMM-review-r3-gate.md` with numbered findings or
+   none. It changes no code.
 3. **Finish.** The gate's findings are fixed once, on the same branch. A
    review run checks each finding against the new commits and reruns the
    suites. A finding still open goes back for one more fix, then the card
    blocks for Kamran. When all are closed the finish card appends the
    issue's entry to the sprint log and moves `STATE.md` on, in a tasks-only
-   commit on the PR branch, waits for the required `test` check on that
-   head, and merges with a regular merge commit. The PR closes the issue.
+   commit on the PR branch. Then it rebases the branch onto the current
+   `main`, reruns the suites, pushes with `--force-with-lease`, waits for
+   the required `test` check on that head, and merges with a regular merge
+   commit. The PR closes the issue.
 4. **Close-out.** Tick the issue in the tracking issue (#22 for sprint 1) and
    take `blocked` off any issue whose last dependency just closed.
 
@@ -56,8 +63,10 @@ Sprint 1 cards are `merge: auto`, the grant in
 [`tasks/0022-sprint-1/GOAL.md`](../tasks/0022-sprint-1/GOAL.md). A new
 sprint or epic states its own policy in its plan. It never inherits one.
 
-In every mode: no squash, no rebase merges, no force push, no direct commits
-to `main`.
+In every mode: no squash, no rebase merges, no direct commits to `main`, and
+never a force push of `main` or of anything already merged. The one force
+push allowed is the finish card's `--force-with-lease` of its own PR branch
+after the final rebase onto `main`.
 
 ## Issues and cards stay in sync
 
@@ -77,7 +86,8 @@ to `main`.
   `review` cards, and `gh pr list`.
 - Never check a card's branch out in the main checkout. Its worktree owns
   it, and a second checkout makes the next run fail to start.
-- Never rebase or force push a branch a card owns.
+- Never rebase or force push a branch a card owns from outside the card.
+  The finish card's own final rebase is the only rewrite of a card branch.
 - Work that is not part of a card happens on its own branch, merged through
   its own PR.
 
