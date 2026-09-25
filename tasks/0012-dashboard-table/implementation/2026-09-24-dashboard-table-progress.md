@@ -56,8 +56,14 @@ The frontier gate (tasks/0012-dashboard-table/reviews/2026-09-25-0838-review-r3-
 
 10. Tests carried a stale copy of the markup: test/dashboard.test.js now reads `dashboard/dashboard.html` directly (scripts and stylesheet links stripped) as the JSDOM source.
 
-11. Thumbnails from i.ytimg.com are not loaded. Per the operator's decision while this card was in flight, the thumbnail cell renders an empty placeholder (`.thumb-placeholder`) and no `img` element is created; `test/no-network.test.js` stays green. Whether to allow `i.ytimg.com` and restore real thumbnails is still open for Kamran; noted in the PR body.
+11. Thumbnails from i.ytimg.com are not loaded, and the thumbnail column itself is dropped rather than replaced with a placeholder. Kamran decided against adding i.ytimg.com to the no-network allowlist in CONTRIBUTING.md; title, channel, duration and watched percent already identify a video, so the column serves no purpose without an image. `buildRow()` in dashboard.js no longer creates a `thumb-cell` or `thumb-placeholder` element, and the corresponding CSS rule is removed from dashboard.css. CONTRIBUTING.md, test/no-network.test.js and test/helpers/no-network-scan.js are unchanged.
 
 12. Repo rules: reworded the em-dash line in this file, fixed the double-hyphen in the round 2 entry, committing this progress entry on its own from the code commit(s), no `fix:` prefix on the commit subjects, and deleted the untracked `test-debug.js` scratch file that was never part of this branch.
 
 **Tests:** `npm run check` clean, `npm test` 197/197, `npm run test:browser` 9/9 (including the new dashboard-scan.spec.js).
+
+## Round 4 fix (review round 1: drop thumbnail column)
+
+Review round 1 flagged finding 11 as unresolved by the round 3 placeholder: Kamran decided to drop the thumbnail column entirely rather than leave it open. Removed the `.thumb-cell` class and `.thumb-placeholder` span from `buildRow()` in dashboard.js, and the `.thumb-placeholder` CSS rule from dashboard.css. Finding 11 above is rewritten to record the final decision. PR body's "Open decision" section is replaced with the final decision text. No test changes needed, the unit and browser tests never asserted on thumbnails.
+
+**Tests:** `npm run check` clean, `npm test` and `npm run test:browser` rerun green (see commit for exact counts).
