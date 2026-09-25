@@ -122,19 +122,14 @@ section {
   background: #f9fafb;
 }
 
-#entry-table th[data-active-sort]::after {
-  content: ' \25BC';
-  font-size: 0.7em;
-}
-
 #entry-table tbody tr:hover {
   background: #f9fafb;
 }
 
-.thumb-cell img {
+.thumb-placeholder {
   width: 80px;
   height: 45px;
-  object-fit: cover;
+  background: var(--border);
   border-radius: 3px;
   display: block;
 }
