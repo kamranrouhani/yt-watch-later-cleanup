@@ -126,14 +126,6 @@ section {
   background: #f9fafb;
 }
 
-.thumb-placeholder {
-  width: 80px;
-  height: 45px;
-  background: var(--border);
-  border-radius: 3px;
-  display: block;
-}
-
 .title-link {
   text-decoration: none;
   color: var(--fg);

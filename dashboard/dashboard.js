@@ -121,10 +121,6 @@
     tr.appendChild(tdPos);
 
     var tdTitle = document.createElement('td');
-    tdTitle.className = 'thumb-cell';
-    var thumb = document.createElement('span');
-    thumb.className = 'thumb-placeholder';
-    tdTitle.appendChild(thumb);
     var a = document.createElement('a');
     a.href = 'https://www.youtube.com/watch?v=' + (entry.videoId || '');
     a.target = '_blank';
