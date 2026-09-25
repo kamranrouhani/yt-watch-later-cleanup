@@ -379,3 +379,22 @@ each, all on paid models, and the watching session alone resent
 about 26M tokens of context before it ran out of quota at 09:36. #7 then
 merged unattended, which showed the board does not need a watcher.
 Next: #12 on the new flow as the pilot.
+
+## 2026-09-25 11:55  #12 dashboard table, merged in PR #40
+
+Worked: finish card for the dashboard table. The gate (round 3) found 12
+issues: broken scan wiring (runtime message instead of tabBridge), acceptance
+tests that could not fail on their defects, no chunked rendering (page froze
+at 5,000 rows), late scan responses overwriting saved data after cancel,
+error type loss, sort arrow accumulation, storage reimplementation, progress
+args mismatch, stale test markup, thumbnail images outside the no-network
+allowlist, and repo rule violations. The fix wired real tabBridge/scanner,
+chunked rendering at 100 rows per animation frame, proper cancel safety,
+type-specific errors (including AuthError/RateLimitedError), correct sort
+arrows via dataset.label, WLCore.storage reuse, object-arg progress, tests
+reading dashboard.html directly, dropped the thumbnail column entirely, and
+cleaned up repo rules. All three suites green: check clean, 197/197 unit,
+9/9 browser (including a new real Chromium scan click test). Two review
+rounds: round 1 requested dropping the thumbnail column (Kamran's decision),
+round 2 approved. Merged as PR #40 with a regular merge commit. Unblocked:
+#13 (scanner rules preview) is now the next issue.

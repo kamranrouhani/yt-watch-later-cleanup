@@ -1,9 +1,9 @@
 # STATE
 
-CURRENT ISSUE: #12 dashboard: scan and show the playlist in a table.
-WAVE: 4. #7 merged as PR #39. #12's dependencies #7, #10 and #11 are
-all closed, so #12 is unblocked.
-LAST COMPLETED: #7 (PR #39, merged 2026-09-24).
+CURRENT ISSUE: #13 scanner rules preview.
+WAVE: 4. #12 merged as PR #40. #13's dependencies #8 and #12 are
+all closed, so #13 is unblocked.
+LAST COMPLETED: #12 (PR #40, merged 2026-09-25).
 BLOCKED ON: nothing. #17 still needs Kamran live. The stray branch
 feature/0004-sapisidhash-signing waits for his one-click deletion.
 Kamran's signed-in rerun of the ensureTab fix is in
